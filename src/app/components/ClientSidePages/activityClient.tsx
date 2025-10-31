@@ -1,6 +1,5 @@
 "use client";
 import { useMemo, useState } from "react";
-import { AnotherNavButton } from "../../components/AnotherNavButton";
 import { Activity, Review } from "../../types/types";
 import { useTranslation } from "react-i18next";
 import { useOthersActivity } from "@/app/hooks";
