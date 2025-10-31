@@ -4,6 +4,7 @@ import { AnotherNavButton } from "../../components/AnotherNavButton";
 import { Activity, Review } from "../../types/types";
 import { useTranslation } from "react-i18next";
 import { useOthersActivity } from "@/app/hooks";
+import { Button } from "../general/Button";
 import { ProperReviewCard } from "./ProperReviewCard";
 
 type ActivityPageProps = {
@@ -28,12 +29,12 @@ const extractReviewFromActivity = (activity: Activity): Review => {
     created_at: activity.created_at,
     album_title: review_details.album.title,
     album_artist: review_details.album.artist,
-    album_cover: review_details.album.cover_url,
+    album_cover: review_details.album.cover_url ?? "",
     album_year: review_details.album.year,
     is_pinned: false,
-    likes_count: review_details.likes_count,
+    likes_count: review_details.likes_count ?? 0,
     is_liked_by_user: review_details.is_liked_by_user,
-    comments_count: review_details.comments_count,
+    comments_count: review_details.comments_count ?? 0,
     user_genres: review_details.user_genres,
   };
 };
@@ -75,21 +76,24 @@ export default function ActivityPage({ user }: ActivityPageProps) {
           Recent Activity
         </h1>
         <div className="flex gap-4">
-          <AnotherNavButton
-            label={t("filter.following")}
+          <Button
             onClick={() => setFilter("following")}
             isSelected={filter === "following"}
-          />
-          <AnotherNavButton
-            label={t("filter.friends")}
+          >
+            {t("filter.following")}
+          </Button>
+          <Button
             onClick={() => setFilter("friends")}
             isSelected={filter === "friends"}
-          />
-          <AnotherNavButton
-            label={t("filter.you")}
+          >
+            {t("filter.friends")}
+          </Button>
+          <Button
             onClick={() => setFilter("you")}
             isSelected={filter === "you"}
-          />
+          >
+            {t("filter.you")}
+          </Button>
         </div>
       </div>
 
