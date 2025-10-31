@@ -76,7 +76,7 @@ export const useToggleReview = (username: string, discogsId?: string) => {
                   ...a.review_details,
                   is_liked_by_user: !a.review_details.is_liked_by_user,
                   likes_count:
-                    a.review_details.likes_count +
+                    (a.review_details.likes_count ?? 0) +
                     (a.review_details.is_liked_by_user ? -1 : 1),
                 },
               }
