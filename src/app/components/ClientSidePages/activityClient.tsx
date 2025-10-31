@@ -19,7 +19,7 @@ const extractReviewFromActivity = (activity: Activity): Review => {
   const review_details = activity.review_details;
   return {
     id: review_details.id,
-    album_discogs_id: review_details.album.discogs_id,
+    album_discogs_id: review_details.album.discogs_id ?? undefined,
     text: review_details.content,
     username: activity.user.username,
     user_avatar: activity.user.avatar,
@@ -27,10 +27,10 @@ const extractReviewFromActivity = (activity: Activity): Review => {
     rating: review_details.rating,
     content: review_details.content,
     created_at: activity.created_at,
-    album_title: review_details.album.title,
-    album_artist: review_details.album.artist,
+    album_title: review_details.album.title ?? "",
+    album_artist: review_details.album.artist ?? "",
     album_cover: review_details.album.cover_url ?? "",
-    album_year: review_details.album.year,
+    album_year: review_details.album.year ?? undefined,
     is_pinned: false,
     likes_count: review_details.likes_count ?? 0,
     is_liked_by_user: review_details.is_liked_by_user,
