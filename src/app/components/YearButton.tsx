@@ -13,11 +13,11 @@ export default function YearButtonCycle() {
   return (
     <button
       onClick={handleClick}
-      className={`
+      className={`h-[44px] w-[101px]
         bg-[#f2f2f2] text-black border-[1.5px] border-black 
-        rounded-full another-heading4 md:another-heading3
+        rounded-full another-heading3 
         flex flex-row items-center justify-center
-        px-3 cursor-pointer
+        px-[19px] py-[6px] cursor-pointer
         `}
     >
       {yearCycle[index]}
