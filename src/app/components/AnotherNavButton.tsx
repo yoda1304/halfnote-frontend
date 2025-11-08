@@ -18,29 +18,36 @@ export const AnotherNavButton = (props: AnotherNavButtonsProps) => {
   const [byPath, setByPath] = useState(false);
 
   useEffect(() => {
-    let hit = false;
-    if (label === "Discover") hit = pathname === "/discovery";
-    if (label === "Activity") hit = pathname === "/activity";
-    if (label === "Profile") hit = pathname.startsWith("/profile/");
-    setByPath(hit);
+    const isActive = (() => {
+      switch (label) {
+        case "Discover":
+          return pathname === "/discovery";
+        case "Activity":
+          return pathname === "/activity";
+        case "Profile":
+          return pathname.startsWith("/profile/");
+        default:
+          return false;
+      }
+    })();
+
+    setByPath(isActive);
   }, [pathname, label]);
 
-  // if they've passed in `isSelected`, use that;
-  // otherwise fall back to the path check
   const active = override ?? byPath;
 
   return (
     <button
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
-      className={`another-heading4 font-bold rounded-full 
-                 border border-black flex items-center 
+      className={`another-heading4 font-bold rounded-full
+                 border border-black flex items-center
                  justify-center h-10 px-4 hover:cursor-pointer hover:bg-gray-200
                  ${
                    active
                      ? "bg-black text-white hover:bg-black"
                      : "bg-white text-black"
-                 } 
+                 }
                  ${disabled ? "opacity-50 cursor-pointer" : ""}`}
     >
       {label}
