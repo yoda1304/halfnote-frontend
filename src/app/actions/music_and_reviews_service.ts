@@ -60,7 +60,6 @@ export const getSearch = async (discogsID: string) => {
 };
 
 export const getUserReviews = async (username: string) => {
-  console.log("REFETCHING USER REVIEWS");
   const session = await verifySession();
   try {
     const response = await fetch(
@@ -77,6 +76,7 @@ export const getUserReviews = async (username: string) => {
       }
     );
     const data = await response.json();
+
     if (!Array.isArray(data)) {
       return [];
     }
