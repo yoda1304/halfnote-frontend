@@ -25,7 +25,9 @@ export const getAlbumDetails = async (discogsID: string) => {
     return await response.json();
   } catch (error: unknown) {
     console.error("Album fetch failed:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to get album details");
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to get album details"
+    );
   }
 };
 
@@ -50,12 +52,13 @@ export const getSearch = async (discogsID: string) => {
     return await response.json();
   } catch (error: unknown) {
     console.error("Album fetch failed:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to get album details");
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to get album details"
+    );
   }
 };
 
 export const getUserReviews = async (username: string) => {
-  console.log("REFETCHING USER REVIEWS");
   const session = await verifySession();
   try {
     const response = await fetch(
@@ -72,6 +75,7 @@ export const getUserReviews = async (username: string) => {
       }
     );
     const data = await response.json();
+
     if (!Array.isArray(data)) {
       return [];
     }
@@ -79,7 +83,9 @@ export const getUserReviews = async (username: string) => {
     return data;
   } catch (error: unknown) {
     console.error("Profile fetch failed:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to get profile");
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to get profile"
+    );
   }
 };
 
@@ -107,7 +113,9 @@ export const getUserActivity = async (username: string) => {
     return data;
   } catch (error: unknown) {
     console.error("Profile fetch failed:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to get activity");
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to get activity"
+    );
   }
 };
 
@@ -132,6 +140,8 @@ export const getOthersActivity = async (username: string, type: string) => {
     return await response.json();
   } catch (error: unknown) {
     console.error("Profile fetch failed:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to get profile");
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to get profile"
+    );
   }
 };

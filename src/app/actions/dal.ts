@@ -37,8 +37,17 @@ export const getUser = async () => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${session.access_token}`,
       },
-      credentials: "include",
     });
+
+    // Check if response is JSON
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      const text = await response.text();
+      console.error("Non-JSON response:", text.substring(0, 200));
+      throw new Error(
+        `Server returned ${response.status}: Expected JSON but got ${contentType || "unknown content type"}`
+      );
+    }
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
@@ -48,6 +57,8 @@ export const getUser = async () => {
     return await response.json();
   } catch (error: unknown) {
     console.error("Profile fetch failed:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to get profile");
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to get profile"
+    );
   }
 };
