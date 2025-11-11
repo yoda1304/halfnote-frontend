@@ -8,11 +8,9 @@ import Form from "next/form";
 import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "@/app/hooks";
 import Link from "next/link";
-import { useQueryClient } from "@tanstack/react-query";
 import { SkeletonNavBar } from "./skeletons/SkeletonNavBar";
 import { AnimatePresence, motion } from "framer-motion";
 export const NavBar = () => {
-  const qc = useQueryClient();
   const router = useRouter();
   const path = usePathname();
   const { data: userData, isLoading: isUserLoading } = useUser();
