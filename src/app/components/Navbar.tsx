@@ -9,14 +9,15 @@ import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "@/app/hooks";
 import Link from "next/link";
 import { SkeletonNavBar } from "./skeletons/SkeletonNavBar";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, scale, transform } from "framer-motion";
 export const NavBar = () => {
   const router = useRouter();
   const path = usePathname();
   const { data: userData, isLoading: isUserLoading } = useUser();
   const [onSearch, setOnSearch] = useState<boolean>(false);
   const [onAlbum, setOnAlbum] = useState<boolean>(false);
-
+  // const [onWholeNote, setOnWholeNote] = useState<boolean>(false);
+  const isWholeNote = path.startsWith("/wholenote");
   useEffect(() => {
     if (path.startsWith("/search")) {
       setOnSearch(true);
@@ -40,92 +41,157 @@ export const NavBar = () => {
 
   // Hide navbar on landing/register
   if (path === "/register" || path === "/") return null;
-  if (isUserLoading || !userData) return <SkeletonNavBar />;
 
+  // For wholenote page, skip authentication check
+  if (!isWholeNote && (isUserLoading || !userData)) return <SkeletonNavBar />;
   return (
-    <nav className="rounded-full outline-solid outline-2 outline-black grid grid-cols-3 items-center bg-white p-4 w-full">
-      {/* Logo */}
-      <Image
-        className="w-[200px] h-[55px] justify-self-start"
-        priority
-        src={Icons.halfnote}
-        alt="Another"
-      />
-
-      <ul className="flex justify-center gap-7 relative">
-        <AnimatePresence mode="popLayout">
+    <nav className="flex rounded-full outline-solid outline-2 outline-black bg-white p-4 w-full relative items-center">
+      {!isWholeNote && (
+        <>
           <motion.div
-            key="discover"
-            layout
-            initial={shouldMerge ? { x: 85, opacity: 0 } : { x: 0, opacity: 1 }}
-            animate={{ x: 0, opacity: shouldMerge ? 0 : 1 }}
-            exit={{ x: 85, opacity: 0 }}
-            transition={{
-              type: "spring",
-              damping: 25,
-              stiffness: 400,
-              mass: 0.5,
-            }}
-            style={{
-              position: shouldMerge ? "absolute" : "relative",
-              pointerEvents: shouldMerge ? "none" : "auto",
-            }}
+            className="relative w-[200px] h-[55px] hover:cursor-pointer z-10"
+            initial="initial"
+            whileHover="hover"
           >
-            <Link href="/discovery">
-              <AnotherNavButton label="Discover" />
-            </Link>
-          </motion.div>
-
-          <motion.div
-            key="activity"
-            layout
-            transition={{
-              type: "spring",
-              damping: 25,
-              stiffness: 400,
-              mass: 0.5,
-            }}
-          >
-            <button
-              onClick={() => {
-                if (shouldMerge) {
-                  router.back();
-                } else {
-                  router.replace("/activity");
-                }
+            <motion.div
+              className="absolute inset-0"
+              variants={{
+                hover: { opacity: 0 },
+                initial: { opacity: 1 },
               }}
+              onClick={() => router.push("/wholenote")}
             >
-              <AnotherNavButton label={getActivityButtonLabel()} />
-            </button>
+              <Image
+                src={Icons.halfnote}
+                alt="Halfnote"
+                fill
+                className="object-contain"
+              />
+            </motion.div>
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center"
+              variants={{
+                hover: { opacity: 1 },
+                initial: { opacity: 0 },
+              }}
+              onClick={() => router.push("/wholenote")}
+            >
+              <Image
+                src={Icons.wholenote}
+                alt="Wholenote"
+                width={300}
+                height={200}
+              />
+            </motion.div>
           </motion.div>
 
-          <motion.div
-            key="profile"
-            layout
-            initial={
-              shouldMerge ? { x: -85, opacity: 0 } : { x: 0, opacity: 1 }
-            }
-            animate={{ x: 0, opacity: shouldMerge ? 0 : 1 }}
-            exit={{ x: -85, opacity: 0 }}
-            transition={{
-              type: "spring",
-              damping: 25,
-              stiffness: 400,
-              mass: 0.5,
-            }}
-            style={{
-              position: shouldMerge ? "absolute" : "relative",
-              pointerEvents: shouldMerge ? "none" : "auto",
-            }}
+          {/* Absolutely centered navigation buttons */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <ul className="flex gap-7 relative">
+              <AnimatePresence mode="popLayout">
+                <motion.div
+                  key="discover"
+                  layout
+                  initial={
+                    shouldMerge ? { x: 85, opacity: 0 } : { x: 0, opacity: 1 }
+                  }
+                  animate={{ x: 0, opacity: shouldMerge ? 0 : 1 }}
+                  exit={{ x: 85, opacity: 0 }}
+                  transition={{
+                    type: "spring",
+                    damping: 25,
+                    stiffness: 400,
+                    mass: 0.5,
+                  }}
+                  style={{
+                    position: shouldMerge ? "absolute" : "relative",
+                    pointerEvents: shouldMerge ? "none" : "auto",
+                  }}
+                >
+                  <Link href="/discovery">
+                    <AnotherNavButton label="Discover" />
+                  </Link>
+                </motion.div>
+
+                <motion.div
+                  key="activity"
+                  layout
+                  transition={{
+                    type: "spring",
+                    damping: 25,
+                    stiffness: 400,
+                    mass: 0.5,
+                  }}
+                >
+                  <AnotherNavButton
+                    label={getActivityButtonLabel()}
+                    onClick={() => {
+                      if (shouldMerge) {
+                        router.back();
+                      } else {
+                        router.replace("/activity");
+                      }
+                    }}
+                  />
+                </motion.div>
+
+                <motion.div
+                  key="profile"
+                  layout
+                  initial={
+                    shouldMerge ? { x: -85, opacity: 0 } : { x: 0, opacity: 1 }
+                  }
+                  animate={{ x: 0, opacity: shouldMerge ? 0 : 1 }}
+                  exit={{ x: -85, opacity: 0 }}
+                  transition={{
+                    type: "spring",
+                    damping: 25,
+                    stiffness: 400,
+                    mass: 0.5,
+                  }}
+                  style={{
+                    position: shouldMerge ? "absolute" : "relative",
+                    pointerEvents: shouldMerge ? "none" : "auto",
+                  }}
+                >
+                  <Link href={`/profile/${userData?.username || ""}`}>
+                    <AnotherNavButton label="Profile" />
+                  </Link>
+                </motion.div>
+              </AnimatePresence>
+            </ul>
+          </div>
+        </>
+      )}
+      {isWholeNote && (
+        <>
+          <div className="relative z-10">
+            <AnotherNavButton
+              label="Back"
+              isSelected={true}
+              disabled={false}
+              onClick={() => router.back()}
+            />
+          </div>
+
+          <div className="flex-1"></div>
+          <div
+            className="absolute left-1/2 top-1/2 
+                    -translate-x-1/2 -translate-y-1/2
+                    overflow-visible pointer-events-none"
           >
-            <Link href={`/profile/${userData.username}`}>
-              <AnotherNavButton label="Profile" />
-            </Link>
-          </motion.div>
-        </AnimatePresence>
-      </ul>
+            <Image
+              className="hover:cursor-pointer pointer-events-auto h-auto w-[200px]"
+              src={Icons.wholenote}
+              alt="Wholenote"
+              onClick={() => router.back()}
+            />
+          </div>
+        </>
+      )}
+
       {/* Search bar */}
-      <div className="justify-self-end mr-2">
+      <div className="mr-2 relative z-10 ml-auto">
         <Form
           action={(formData: FormData) => {
             const query = formData.get("search") as string;
@@ -147,10 +213,12 @@ export const NavBar = () => {
             name="search"
             type="text"
             placeholder="Search"
-            className="w-full focus:outline-none another-heading4 text-black ml-5 placeholder:text-black bg-transparent"
+            className="w-full focus:outline-none another-heading4 text-black ml-5 placeholder:text-black bg-transparent justify-self-end"
           />
         </Form>
       </div>
     </nav>
   );
 };
+
+export default NavBar;
