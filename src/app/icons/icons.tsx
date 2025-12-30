@@ -70,6 +70,7 @@ import sevenOutTen from "../../../public/rating_stamps_ten/sevenOutTenStamp.svg"
 import eightOutTen from "../../../public/rating_stamps_ten/eightOutTenStamp.svg";
 import nineOutTen from "../../../public/rating_stamps_ten/nineOutTenStamp.svg";
 import tenOutTen from "../../../public/rating_stamps_ten/tenOutTenStamp.svg";
+import Wholenote from "@/app/icons/another_misc_icons/wholenote.svg";
 export const Icons = {
   classical: Classical,
   country: Country,
@@ -104,6 +105,7 @@ export const Icons = {
   star: Star,
   heart: Heart,
   halfnote: Halfnote,
+  wholenote: Wholenote,
   likedHeart: likedHeart,
   unlikedHeart: unlikedHeart,
   hourGlass: hourGlass,
