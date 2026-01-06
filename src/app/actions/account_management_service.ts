@@ -2,32 +2,7 @@
 import { cookies } from "next/headers";
 
 const BASE_URL =
-  process.env.BASE_URL || `https://halfnote-backend.vercel.app/api`;
-// export async function decrypt(session: string | undefined = "") {
-//   if (!session) {
-//     throw new Error("No session token provided");
-//   }
-
-//   try {
-//     // Add more detailed logging for debugging
-//     console.log(
-//       "Attempting to verify token with secret length:",
-//       secretKey.length
-//     );
-
-//     const { payload } = await jwtVerify(
-//       session,
-//       new TextEncoder().encode(secretKey),
-//       {
-//         algorithms: ["HS256"],
-//       }
-//     );
-//     return payload;
-//   } catch (error) {
-//     console.error("Token verification failed:", error);
-//     throw error; // Throw the original error for better debugging
-//   }
-// }
+  (process.env.BASE_URL || "https://halfnote-backend.vercel.app") + "/api";
 
 export async function createSession(
   access_token: string,
@@ -42,14 +17,14 @@ export async function createSession(
 
   cookieStore.set("access", access_token, {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
     expires: accessExpiresAt,
     sameSite: "lax",
     path: "/",
   });
   cookieStore.set("refresh", refresh_token, {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
     expires: refreshExpiresAt,
     sameSite: "lax",
     path: "/",
@@ -130,7 +105,9 @@ export const RegisterUser = async (
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || data.detail || "Registration failed");
+      throw new Error(
+        data.error || data.message || data.detail || "Registration failed"
+      );
     }
 
     if (!data.access_token || !data.refresh_token) {
@@ -181,7 +158,9 @@ export const LoginUser = async (
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "Login failed");
+      throw new Error(
+        error.error || error.message || error.detail || "Login failed"
+      );
     }
 
     const data = await response.json();

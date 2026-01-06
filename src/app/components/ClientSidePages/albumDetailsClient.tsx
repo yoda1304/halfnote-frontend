@@ -7,7 +7,7 @@ import ReviewModal from "../ReviewModal";
 import { Icons } from "../../icons/icons";
 import { AlbumDetailRecentActivity } from "../AlbumDetailRecentActivity";
 import { Activity, Review } from "@/app/types/types";
-import Lorde from "../../../../public/sample_images/lorde.jpeg";
+import Default from "../../../../public/sample_images/lorde.jpeg";
 import { ProperReviewCard } from "./ProperReviewCard";
 import { CreateAlbumListModal } from "../CreateAlbumListModal";
 import useEmblaCarousel from "embla-carousel-react";
@@ -34,6 +34,7 @@ const AlbumDetailsClient = ({ user }: AlbumDetailsProps) => {
     Review | Activity | undefined
   >(undefined);
 
+  console.log(albumDetails);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: "center",
@@ -71,7 +72,7 @@ const AlbumDetailsClient = ({ user }: AlbumDetailsProps) => {
 
   const imageSrc =
     albumDetails.album.cover_url || albumDetails.album.cover_image;
-
+  console.log(albumDetails);
   return (
     <>
       <div className="grid grid-cols-1 gap-5 mb-5 lg:grid-cols-4 lg:w-[100%]">
@@ -132,15 +133,25 @@ const AlbumDetailsClient = ({ user }: AlbumDetailsProps) => {
               <span className="flex flex-col items-center">
                 <p className="font-bold another-heading5">avg.score</p>
                 {/* defaulting to 1 for now, need to change */}
-                <Image
-                  width={80}
-                  height={80}
-                  src={generateRatingStamp(albumDetails.average_rating ?? 0, {
-                    empty: false,
-                    outTen: true,
-                  })}
-                  alt="Badge"
-                />
+                {(() => {
+                  const ratingStampSrc = generateRatingStamp(
+                    albumDetails.average_rating ?? 0,
+                    {
+                      empty: false,
+                      outTen: true,
+                    }
+                  );
+                  return (
+                    ratingStampSrc && (
+                      <Image
+                        width={80}
+                        height={80}
+                        src={ratingStampSrc}
+                        alt="Badge"
+                      />
+                    )
+                  );
+                })()}
               </span>
             </div>
             <hr className="mt-5" />
@@ -256,7 +267,12 @@ const AlbumDetailsClient = ({ user }: AlbumDetailsProps) => {
 
           <div className="flex flex-col gap-4 h-screen w-[30%]">
             <div className="bg-white rounded-xl border-1 border-black p-5 h-[50%] w-full relative overflow-hidden">
-              <Image src={Lorde} alt="Lorde" fill className="object-cover" />
+              <Image
+                src={albumDetails.album.artist_photo_url || Default}
+                alt={albumDetails.album.artist || "Artist"}
+                fill
+                className="object-cover"
+              />
             </div>
 
             <div className="bg-white rounded-xl border-1 border-black p-5 h-full flex flex-col items-center relative">

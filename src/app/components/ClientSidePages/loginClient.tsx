@@ -31,7 +31,11 @@ export default function LoginForm() {
       router.replace("/discovery");
       router.refresh();
     } catch (err: unknown) {
-      setError("Login failed. Please check your credentials.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Login failed. Please check your credentials."
+      );
       console.error(err);
     } finally {
       setLoading(false);

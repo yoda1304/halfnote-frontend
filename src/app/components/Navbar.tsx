@@ -16,6 +16,7 @@ export const NavBar = () => {
   const { data: userData, isLoading: isUserLoading } = useUser();
   const [onSearch, setOnSearch] = useState<boolean>(false);
   const [onAlbum, setOnAlbum] = useState<boolean>(false);
+  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   // const [onWholeNote, setOnWholeNote] = useState<boolean>(false);
   const isWholeNote = path.startsWith("/wholenote");
   useEffect(() => {
@@ -86,7 +87,13 @@ export const NavBar = () => {
           </motion.div>
 
           {/* Absolutely centered navigation buttons */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <motion.div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            animate={{
+              opacity: isSearchFocused ? 0 : 1,
+              pointerEvents: isSearchFocused ? "none" : "auto",
+            }}
+          >
             <ul className="flex gap-7 relative">
               <AnimatePresence mode="popLayout">
                 <motion.div
@@ -160,7 +167,7 @@ export const NavBar = () => {
                 </motion.div>
               </AnimatePresence>
             </ul>
-          </div>
+          </motion.div>
         </>
       )}
       {isWholeNote && (
@@ -191,7 +198,15 @@ export const NavBar = () => {
       )}
 
       {/* Search bar */}
-      <div className="mr-2 relative z-10 ml-auto">
+      <motion.div
+        layout
+        className="mr-2 relative z-10 ml-auto"
+        initial={{ width: "160px" }}
+        animate={{
+          width: isSearchFocused ? "calc(100% - 200px)" : "160px",
+        }}
+        transition={{ type: "tween", ease: "easeInOut", duration: 0.3 }}
+      >
         <Form
           action={(formData: FormData) => {
             const query = formData.get("search") as string;
@@ -199,7 +214,7 @@ export const NavBar = () => {
             const encodedQuery = encodeURIComponent(query);
             router.push(`/search?query=${encodedQuery}`);
           }}
-          className="flex flex-row justify-between border bg-[var(--color-bg-gray)] border-black rounded-full p-3 w-40 focus-within:w-80 transition-all duration-300 ease-in-out focus:outline-none"
+          className="flex flex-row justify-between border bg-[var(--color-bg-gray)] border-black rounded-full p-3 w-full focus:outline-none"
         >
           <button type="submit">
             <Image
@@ -210,13 +225,15 @@ export const NavBar = () => {
             />
           </button>
           <input
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
             name="search"
             type="text"
             placeholder="Search"
             className="w-full focus:outline-none another-heading4 text-black ml-5 placeholder:text-black bg-transparent justify-self-end"
           />
         </Form>
-      </div>
+      </motion.div>
     </nav>
   );
 };

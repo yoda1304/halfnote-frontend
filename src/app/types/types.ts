@@ -66,6 +66,7 @@ export interface AlbumDetailData {
 }
 
 export interface AlbumData {
+  artist_photo_url?: string;
   id?: string;
   title: string;
   artist: string;
