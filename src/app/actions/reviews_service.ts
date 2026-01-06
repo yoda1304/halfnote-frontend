@@ -1,7 +1,7 @@
 "use server";
 import { verifySession } from "./dal";
 const BASE_URL =
-  process.env.BASE_URL || `https://halfnote-backend.vercel.app/api`;
+  (process.env.BASE_URL || "https://halfnote-backend.vercel.app") + "/api";
 
 export const createReview = async (
   discogsID: string,

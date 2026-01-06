@@ -2,7 +2,7 @@
 import { verifySession } from "./dal";
 
 const BASE_URL =
-  process.env.BASE_URL || `https://halfnote-backend.vercel.app/api`;
+  (process.env.BASE_URL || "https://halfnote-backend.vercel.app") + "/api";
 
 export const CreateList = async (
   name: string,

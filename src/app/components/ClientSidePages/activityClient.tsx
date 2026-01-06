@@ -67,31 +67,25 @@ export default function ActivityPage({ user }: ActivityPageProps) {
   }, [youActivity, friendActivity, followingActivity, filter]);
 
   return (
-    <div className="flex flex-col border-black border-2 bg-white rounded-xl overflow-scroll pb-10 h-auto px-9 py-9 w-[70%]">
+    <div className="flex flex-col border-black border-2 bg-white rounded-xl pb-10 h-auto px-9 py-9 w-full">
       {/* Header + Tabs */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="another-heading1 text-[42px]">
           {/* {t("reviews.activity")} */}
-          Recent Activity
+          Activity
         </h1>
         <div className="flex gap-4">
-          <Button
-            onClick={() => setFilter("following")}
-            isSelected={filter === "following"}
-          >
-            {t("filter.following")}
-          </Button>
           <Button
             onClick={() => setFilter("friends")}
             isSelected={filter === "friends"}
           >
-            {t("filter.friends")}
+            Recent
           </Button>
           <Button
             onClick={() => setFilter("you")}
             isSelected={filter === "you"}
           >
-            {t("filter.you")}
+            Top
           </Button>
         </div>
       </div>
