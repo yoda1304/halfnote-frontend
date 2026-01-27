@@ -146,3 +146,55 @@ export const getOthersActivity = async (username: string, type: string) => {
     );
   }
 };
+
+export const getNewReleases = async (limit: number = 10) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/music/discovery/new-releases/?limit=${limit}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 3600 }, // Cache for 1 hour
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || `Could not get new releases`);
+    }
+    return await response.json();
+  } catch (error: unknown) {
+    console.error("New releases fetch failed:", error);
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to get new releases"
+    );
+  }
+};
+
+export const getPopularAlbums = async (limit: number = 10) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/music/discovery/popular/?limit=${limit}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 3600 }, // Cache for 1 hour
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || `Could not get popular albums`);
+    }
+    return await response.json();
+  } catch (error: unknown) {
+    console.error("Popular albums fetch failed:", error);
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to get popular albums"
+    );
+  }
+};

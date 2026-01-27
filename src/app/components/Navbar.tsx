@@ -10,6 +10,10 @@ import { useUser } from "@/app/hooks";
 import Link from "next/link";
 import { SkeletonNavBar } from "./skeletons/SkeletonNavBar";
 import { AnimatePresence, motion, scale, transform } from "framer-motion";
+import { SearchDropdown } from "./SearchDropdown";
+import { useRecentSearches } from "@/app/hooks/useRecentSearches";
+import { useNewReleases, usePopularAlbums, useSearch } from "@/app/hooks";
+import { useDebounce } from "@/app/hooks/useDebounce";
 export const NavBar = () => {
   const router = useRouter();
   const path = usePathname();
@@ -17,6 +21,14 @@ export const NavBar = () => {
   const [onSearch, setOnSearch] = useState<boolean>(false);
   const [onAlbum, setOnAlbum] = useState<boolean>(false);
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+  const { addSearch, recentSearches } = useRecentSearches();
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+
+  const { data: searchResults } = useSearch(debouncedSearchQuery);
+
+  const { data: newReleases } = useNewReleases();
+  const { data: popularAlbums } = usePopularAlbums();
   // const [onWholeNote, setOnWholeNote] = useState<boolean>(false);
   const isWholeNote = path.startsWith("/wholenote");
   useEffect(() => {
@@ -197,42 +209,77 @@ export const NavBar = () => {
         </>
       )}
 
-      {/* Search bar */}
       <motion.div
         layout
-        className="mr-2 relative z-10 ml-auto"
-        initial={{ width: "160px" }}
+        className="mr-2 relative z-10 ml-auto flex flex-row overflow-visible"
+        initial={{ width: "250px" }}
         animate={{
-          width: isSearchFocused ? "calc(100% - 200px)" : "160px",
+          width: isSearchFocused ? "calc(100% - 300px)" : "250px",
         }}
         transition={{ type: "tween", ease: "easeInOut", duration: 0.3 }}
       >
-        <Form
-          action={(formData: FormData) => {
-            const query = formData.get("search") as string;
-            if (!query || query.length === 0) return;
-            const encodedQuery = encodeURIComponent(query);
-            router.push(`/search?query=${encodedQuery}`);
-          }}
-          className="flex flex-row justify-between border bg-[var(--color-bg-gray)] border-black rounded-full p-3 w-full focus:outline-none"
-        >
-          <button type="submit">
-            <Image
-              src={Icons.search}
-              alt="Search Icon"
-              width={24}
-              height={24}
+        <div className="relative flex-1 overflow-visible">
+          <Form
+            action={(formData: FormData) => {
+              const query = formData.get("search") as string;
+              if (!query || query.length === 0) return;
+              addSearch(query);
+              const encodedQuery = encodeURIComponent(query);
+              setIsSearchFocused(false);
+              setSearchQuery("");
+              router.push(`/search?query=${encodedQuery}`);
+            }}
+            className={`flex flex-row justify-between border bg-[var(--color-bg-gray)] border-black p-3 w-full focus:outline-none transition-all duration-300 ${
+              isSearchFocused
+                ? "rounded-t-4xl rounded-b-none border-b-0"
+                : "rounded-full"
+            }`}
+          >
+            <button type="submit">
+              <Image
+                src={Icons.search}
+                alt="Search Icon"
+                width={24}
+                height={24}
+              />
+            </button>
+            <input
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchQuery}
+              name="search"
+              type="text"
+              placeholder="Search"
+              className="w-full focus:outline-none another-heading4 text-black ml-5 placeholder:text-black bg-transparent justify-self-end"
             />
-          </button>
-          <input
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
-            name="search"
-            type="text"
-            placeholder="Search"
-            className="w-full focus:outline-none another-heading4 text-black ml-5 placeholder:text-black bg-transparent justify-self-end"
-          />
-        </Form>
+          </Form>
+          <AnimatePresence>
+            {isSearchFocused && (
+              <SearchDropdown
+                newReleases={newReleases?.results || []}
+                popularAlbums={popularAlbums?.results || []}
+                searchResults={searchResults?.results || []}
+                query={searchQuery}
+                onClose={() => setIsSearchFocused(false)}
+                setSearchQuery={setSearchQuery}
+              />
+            )}
+          </AnimatePresence>
+        </div>
+        <Link
+          href={`/profile/${userData?.username || ""}`}
+          className="ml-4 justify-self-end align-self-end"
+        >
+          <div className="relative w-12 h-12 rounded-full overflow-hidden border border-black cursor-pointer">
+            <Image
+              src={userData?.avatar || "/default-avatar.png"}
+              alt="Profile"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </Link>
       </motion.div>
     </nav>
   );

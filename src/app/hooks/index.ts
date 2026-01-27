@@ -6,6 +6,8 @@ import {
   getUserActivity,
   getUserReviews,
   getAlbumDetails,
+  getNewReleases,
+  getPopularAlbums,
 } from "@/app/actions/music_and_reviews_service";
 import {
   createReview,
@@ -14,7 +16,13 @@ import {
 } from "@/app/actions/reviews_service";
 import { EditProfile } from "@/app/actions/account_management_service";
 import { useQueryClient } from "@tanstack/react-query";
-import { User, Activity, Review, AlbumDetailData } from "../types/types";
+import {
+  User,
+  Activity,
+  Review,
+  AlbumDetailData,
+  SearchResult,
+} from "../types/types";
 
 export const useUser = () =>
   useQuery<User, Error>({
@@ -576,4 +584,20 @@ export const useEditProfile = () => {
     isError: mutation.isError,
     isSuccess: mutation.isSuccess,
   };
+};
+
+export const useNewReleases = (limit: number = 2) => {
+  return useQuery<{ results: SearchResult[]; cached: boolean }, Error>({
+    queryKey: ["newReleases", limit],
+    queryFn: () => getNewReleases(limit),
+    staleTime: 60 * 60 * 1000,
+  });
+};
+
+export const usePopularAlbums = (limit: number = 4) => {
+  return useQuery<{ results: SearchResult[]; cached: boolean }, Error>({
+    queryKey: ["popularAlbums", limit],
+    queryFn: () => getPopularAlbums(limit),
+    staleTime: 60 * 60 * 1000,
+  });
 };
