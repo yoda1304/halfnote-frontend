@@ -82,7 +82,7 @@ export default function ProfilePage({ user }: ProfilePageProps) {
 
   return (
     <div className="flex flex-col border-black border-2 bg-white rounded-xl overflow-scroll pb-10 max-h-[800px]">
-      <div className="w-full h-60 relative z-0">
+      <div className="w-full h-60 relative">
         <Image
           src={Black}
           alt="banner-image"
@@ -95,7 +95,7 @@ export default function ProfilePage({ user }: ProfilePageProps) {
         {/* Profile Info Sidebar */}
         <div className="col-span-2 flex flex-col items-center px-50">
           {/* Profile Picture */}
-          <div className="w-[250px] h-[250px] -mt-30 border-2 border-black bg-white z-10 overflow-hidden relative flex-shrink-0 rounded-full">
+          <div className="w-[250px] h-[250px] -mt-30 border-2 border-black bg-white overflow-hidden relative flex-shrink-0 rounded-full">
             <Image
               src={userData?.avatar || "/default-avatar.png"}
               alt="profile"
@@ -278,10 +278,9 @@ export default function ProfilePage({ user }: ProfilePageProps) {
             ) : filter === "reviewed" && reviewedActivity.length ? (
               reviewedActivity.map((activity) => (
                 <div
-                  className={`mb-2 ${
-                    activity.review_details.content.length > 0 &&
+                  className={`mb-2 ${activity.review_details.content.length > 0 &&
                     "cursor-pointer"
-                  }`}
+                    }`}
                   key={activity.id}
                   onClick={() => {
                     if (activity.review_details.content.length > 0) {
@@ -308,10 +307,9 @@ export default function ProfilePage({ user }: ProfilePageProps) {
             ) : filter === "liked" && likedActivity.length ? (
               likedActivity.map((activity) => (
                 <div
-                  className={`mb-2 ${
-                    activity.review_details.content.length > 0 &&
+                  className={`mb-2 ${activity.review_details.content.length > 0 &&
                     "cursor-pointer"
-                  }`}
+                    }`}
                   key={activity.id}
                   onClick={() => {
                     if (activity.review_details.content.length > 0) {
