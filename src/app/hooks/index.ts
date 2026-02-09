@@ -70,8 +70,8 @@ export const useToggleReview = (username: string, discogsId?: string) => {
                 is_liked_by_user: !r.is_liked_by_user,
                 likes_count: r.likes_count + (r.is_liked_by_user ? -1 : 1),
               }
-            : r
-        )
+            : r,
+        ),
       );
 
       // Optimistic update: activity
@@ -88,8 +88,8 @@ export const useToggleReview = (username: string, discogsId?: string) => {
                     (a.review_details.is_liked_by_user ? -1 : 1),
                 },
               }
-            : a
-        )
+            : a,
+        ),
       );
 
       // Optimistic update: albumDetails
@@ -108,10 +108,10 @@ export const useToggleReview = (username: string, discogsId?: string) => {
                           likes_count:
                             r.likes_count + (r.is_liked_by_user ? -1 : 1),
                         }
-                      : r
+                      : r,
                   ),
                 }
-              : old
+              : old,
         );
       }
 
@@ -140,10 +140,10 @@ export const useToggleReview = (username: string, discogsId?: string) => {
               ? {
                   ...old,
                   reviews: old.reviews.map((r) =>
-                    r.id === serverData.id ? serverData : r
+                    r.id === serverData.id ? serverData : r,
                   ),
                 }
-              : old
+              : old,
         );
       }
 
@@ -179,7 +179,7 @@ export const useUserActivity = (username: string) =>
 
 export const useOthersActivity = (
   username: string,
-  type: "friends" | "you" | "incoming"
+  type: "friends" | "you" | "incoming",
 ) =>
   useQuery<Activity[], Error>({
     queryKey: ["other", username, type],
@@ -246,7 +246,6 @@ export const useCreateReview = (username: string) => {
         id: -Date.now(),
         rating: review.ratingNumber,
         content: review.description,
-        text: review.description,
         album_discogs_id: review.discogsId,
         is_liked_by_user: false,
         likes_count: 0,
@@ -278,7 +277,7 @@ export const useCreateReview = (username: string) => {
                     ((old.average_rating ?? 0) * old.review_count +
                       review.ratingNumber) /
                     newReviewCount
-                  ).toFixed(2)
+                  ).toFixed(2),
                 )
               : review.ratingNumber;
 
@@ -288,7 +287,7 @@ export const useCreateReview = (username: string) => {
             review_count: newReviewCount,
             average_rating: newAverageRating,
           };
-        }
+        },
       );
 
       // Optimistically add to reviews list
@@ -309,18 +308,18 @@ export const useCreateReview = (username: string) => {
           return {
             ...old,
             reviews: old.reviews.map((r) =>
-              r.id < 0 && r.rating === serverData.rating ? serverData : r
+              r.id < 0 && r.rating === serverData.rating ? serverData : r,
             ),
           };
-        }
+        },
       );
 
       queryClient.setQueryData<Review[]>(["reviews", username], (old) =>
         old
           ? old.map((r) =>
-              r.id < 0 && r.rating === serverData.rating ? serverData : r
+              r.id < 0 && r.rating === serverData.rating ? serverData : r,
             )
-          : old
+          : old,
       );
 
       // Invalidate to ensure fresh data
@@ -343,7 +342,7 @@ export const useCreateReview = (username: string) => {
       if (context?.album) {
         queryClient.setQueryData(
           ["albumDetails", variables.discogsId],
-          context.album
+          context.album,
         );
       }
       if (context?.reviews) {
@@ -405,11 +404,14 @@ export const useEditReview = (username: string) => {
               ? {
                   ...r,
                   rating: vars.ratingNumber,
-                  description: vars.description,
-                  genres: vars.genres,
+                  content: vars.description,
+                  user_genres: vars.genres.map((name, idx) => ({
+                    id: idx,
+                    name,
+                  })),
                   is_liked_by_user: r.is_liked_by_user,
                 }
-              : r
+              : r,
           );
           const n = old.review_count;
           const oldReview = old.reviews.find((r) => r.id === vars.reviewId);
@@ -420,7 +422,7 @@ export const useEditReview = (username: string) => {
                   (
                     (old.average_rating ?? 0) +
                     (vars.ratingNumber - oldRating) / n
-                  ).toFixed(2)
+                  ).toFixed(2),
                 )
               : vars.ratingNumber;
           return {
@@ -428,7 +430,7 @@ export const useEditReview = (username: string) => {
             reviews: updatedReviews,
             average_rating: updatedAverageRating,
           };
-        }
+        },
       );
 
       // Optimistic: reviews
@@ -439,13 +441,16 @@ export const useEditReview = (username: string) => {
                 ? {
                     ...r,
                     rating: vars.ratingNumber,
-                    description: vars.description,
-                    genres: vars.genres,
+                    content: vars.description,
+                    user_genres: vars.genres.map((name, idx) => ({
+                      id: idx,
+                      name,
+                    })),
                     is_liked_by_user: r.is_liked_by_user,
                   }
-                : r
+                : r,
             )
-          : old
+          : old,
       );
 
       // Optimistic: activity
@@ -458,14 +463,17 @@ export const useEditReview = (username: string) => {
                     review_details: {
                       ...a.review_details,
                       rating: vars.ratingNumber,
-                      description: vars.description,
-                      genres: vars.genres,
+                      content: vars.description,
+                      user_genres: vars.genres.map((name, idx) => ({
+                        id: idx,
+                        name,
+                      })),
                       is_liked_by_user: a.review_details.is_liked_by_user,
                     },
                   }
-                : a
+                : a,
             )
-          : old
+          : old,
       );
 
       return snapshots;
@@ -492,10 +500,10 @@ export const useEditReview = (username: string) => {
             ? {
                 ...old,
                 reviews: old.reviews.map((r) =>
-                  r.id === serverData.id ? serverData : r
+                  r.id === serverData.id ? serverData : r,
                 ),
               }
-            : old
+            : old,
       );
 
       // Invalidate queries to ensure fresh data

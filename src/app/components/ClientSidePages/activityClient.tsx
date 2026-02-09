@@ -14,27 +14,28 @@ type ActivityPageProps = {
 
 type ActivityFilterState = "following" | "friends" | "you";
 
-const extractReviewFromActivity = (activity: Activity): Review => {
-  const review_details = activity.review_details;
+const extractReviewFromActivity = (activity: Activity): Review | null => {
+  const rd = activity.review_details;
+  if (!rd) return null;
+
   return {
-    id: review_details.id,
-    album_discogs_id: review_details.album.discogs_id ?? undefined,
-    text: review_details.content,
-    username: activity.user.username,
-    user_avatar: activity.user.avatar,
-    user_is_staff: activity.user.is_staff ?? false,
-    rating: review_details.rating,
-    content: review_details.content,
+    id: rd.id,
+    album_discogs_id: rd.album.discogs_id,
+    username: rd.user.username,
+    user_avatar: rd.user.avatar ?? "/default-avatar.png",
+    user_is_staff: rd.user.is_staff ?? false,
+    rating: rd.rating,
+    content: rd.content,
     created_at: activity.created_at,
-    album_title: review_details.album.title ?? "",
-    album_artist: review_details.album.artist ?? "",
-    album_cover: review_details.album.cover_url ?? "",
-    album_year: review_details.album.year ?? undefined,
+    album_title: rd.album.title,
+    album_artist: rd.album.artist,
+    album_cover: rd.album.cover_url ?? "",
+    album_year: rd.album.year,
     is_pinned: false,
-    likes_count: review_details.likes_count ?? 0,
-    is_liked_by_user: review_details.is_liked_by_user,
-    comments_count: review_details.comments_count ?? 0,
-    user_genres: review_details.user_genres,
+    likes_count: rd.likes_count ?? 0,
+    is_liked_by_user: rd.is_liked_by_user,
+    comments_count: rd.comments_count ?? 0,
+    user_genres: rd.user_genres,
   };
 };
 
@@ -46,12 +47,12 @@ export default function ActivityPage({ user }: ActivityPageProps) {
   const { data: youActivity = [] } = useOthersActivity(user.username, "you");
   const { data: friendActivity = [] } = useOthersActivity(
     user.username,
-    "friends"
+    "friends",
   );
 
   const { data: followingActivity = [] } = useOthersActivity(
     user.username,
-    "incoming"
+    "incoming",
   );
 
   // Derive filtered activities dynamically using useMemo
@@ -93,14 +94,18 @@ export default function ActivityPage({ user }: ActivityPageProps) {
       {/* Scrollable list of cards */}
       <div className="overflow-y-auto min-h-[550px] max-h-[700px] pr-2 flex flex-col gap-4">
         {filteredActivities.length > 0 &&
-          filteredActivities.map((activity: Activity) => (
-            <ProperReviewCard
-              key={activity.id}
-              review={extractReviewFromActivity(activity)}
-              username={activity.user.username}
-              setOpen={() => {}}
-            />
-          ))}
+          filteredActivities.map((activity: Activity) => {
+            const review = extractReviewFromActivity(activity);
+            if (!review) return null;
+            return (
+              <ProperReviewCard
+                key={activity.id}
+                review={review}
+                username={activity.user.username}
+                setOpen={() => {}}
+              />
+            );
+          })}
       </div>
     </div>
   );
