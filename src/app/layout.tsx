@@ -49,7 +49,7 @@ export default function RootLayout({
       lang="en"
       className={`${instrumentSans.variable} ${instrumentSerif.variable}`}
     >
-      <body className="items-center justify-center m-12 flex flex-col gap-8">
+      <body className="items-center justify-center mt-6 mx-12 flex flex-col gap-2">
         <ReactQueryProvider>
           <TranslationProvider>
             <NavBar />

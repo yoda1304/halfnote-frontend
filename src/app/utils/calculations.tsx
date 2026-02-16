@@ -14,6 +14,7 @@ import reggaeStamp from "@/app/icons/genre_stamp/REGGAE-genreTag_container.svg";
 import rockStamp from "@/app/icons/genre_stamp/ROCK-genreTag_container.svg";
 import { Icons } from "../icons/icons";
 import * as Stamps from "@/app/icons/stamps";
+import { SearchResult } from "../types/types";
 
 type RatingStampOptions = {
   empty?: boolean;
@@ -126,7 +127,7 @@ export function genreBadge({
 
 export function generateRatingStamp(
   rating: number,
-  { empty = true, outTen = false }: RatingStampOptions = {}
+  { empty = true, outTen = false }: RatingStampOptions = {},
 ) {
   if (empty) {
     return emptyRatingBadgeMap[rating];
@@ -166,4 +167,34 @@ export const getTimeAgo = (time: string) => {
   } else {
     return diffInYears === 1 ? "1 year ago" : `${diffInYears} years ago`;
   }
+};
+
+export const getArtistsFromAlbums = (
+  albums: SearchResult[],
+  searchQuery: string,
+) => {
+  const artistMap = new Map<string, string>();
+
+  albums.forEach((album) => {
+    if (!album.artist) return;
+    if (
+      !artistMap.has(album.artist) ||
+      (!artistMap.get(album.artist) && album.artist_photo_url)
+    ) {
+      artistMap.set(album.artist, album.artist_photo_url || "");
+    }
+  });
+
+  const artists = Array.from(artistMap.entries()).map(([name, photo]) => ({
+    artist_name: name,
+    artist_photo: photo,
+  }));
+
+  return artists.sort((a, b) => {
+    const aMatch = a.artist_name.toLowerCase() === searchQuery.toLowerCase();
+    const bMatch = b.artist_name.toLowerCase() === searchQuery.toLowerCase();
+    if (aMatch && !bMatch) return -1;
+    if (!aMatch && bMatch) return 1;
+    return 0;
+  });
 };

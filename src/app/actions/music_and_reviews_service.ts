@@ -27,7 +27,7 @@ export const getAlbumDetails = async (discogsID: string) => {
   } catch (error: unknown) {
     console.error("Album fetch failed:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Failed to get album details"
+      error instanceof Error ? error.message : "Failed to get album details",
     );
   }
 };
@@ -43,7 +43,7 @@ export const getSearch = async (discogsID: string) => {
         },
         next: { revalidate: 0 },
         cache: "no-store",
-      }
+      },
     );
 
     if (!response.ok) {
@@ -54,7 +54,36 @@ export const getSearch = async (discogsID: string) => {
   } catch (error: unknown) {
     console.error("Album fetch failed:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Failed to get album details"
+      error instanceof Error ? error.message : "Failed to get album details",
+    );
+  }
+};
+
+export const getSearchUsers = async (query: string) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/accounts/users/search/?q=${encodeURIComponent(query)}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 0 },
+        cache: "no-store",
+      },
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || `Could not get users for ${query}`);
+    }
+    return await response.json();
+  } catch (error: unknown) {
+    console.error("User search failed:", error);
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : "Failed to get user search results",
     );
   }
 };
@@ -73,7 +102,7 @@ export const getUserReviews = async (username: string) => {
         credentials: "include",
         next: { revalidate: 0 },
         cache: "no-store",
-      }
+      },
     );
     const data = await response.json();
 
@@ -85,7 +114,7 @@ export const getUserReviews = async (username: string) => {
   } catch (error: unknown) {
     console.error("Profile fetch failed:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Failed to get profile"
+      error instanceof Error ? error.message : "Failed to get profile",
     );
   }
 };
@@ -104,7 +133,7 @@ export const getUserActivity = async (username: string) => {
         credentials: "include",
         next: { revalidate: 0 },
         cache: "no-store",
-      }
+      },
     );
     const data = await response.json();
     if (!Array.isArray(data)) {
@@ -115,7 +144,7 @@ export const getUserActivity = async (username: string) => {
   } catch (error: unknown) {
     console.error("Profile fetch failed:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Failed to get activity"
+      error instanceof Error ? error.message : "Failed to get activity",
     );
   }
 };
@@ -142,7 +171,7 @@ export const getOthersActivity = async (username: string, type: string) => {
   } catch (error: unknown) {
     console.error("Profile fetch failed:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Failed to get profile"
+      error instanceof Error ? error.message : "Failed to get profile",
     );
   }
 };
@@ -157,7 +186,7 @@ export const getNewReleases = async (limit: number = 10) => {
           "Content-Type": "application/json",
         },
         next: { revalidate: 3600 }, // Cache for 1 hour
-      }
+      },
     );
 
     if (!response.ok) {
@@ -168,7 +197,7 @@ export const getNewReleases = async (limit: number = 10) => {
   } catch (error: unknown) {
     console.error("New releases fetch failed:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Failed to get new releases"
+      error instanceof Error ? error.message : "Failed to get new releases",
     );
   }
 };
@@ -183,7 +212,7 @@ export const getPopularAlbums = async (limit: number = 10) => {
           "Content-Type": "application/json",
         },
         next: { revalidate: 3600 }, // Cache for 1 hour
-      }
+      },
     );
 
     if (!response.ok) {
@@ -194,7 +223,7 @@ export const getPopularAlbums = async (limit: number = 10) => {
   } catch (error: unknown) {
     console.error("Popular albums fetch failed:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Failed to get popular albums"
+      error instanceof Error ? error.message : "Failed to get popular albums",
     );
   }
 };

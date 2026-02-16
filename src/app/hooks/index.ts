@@ -8,6 +8,7 @@ import {
   getAlbumDetails,
   getNewReleases,
   getPopularAlbums,
+  getSearchUsers,
 } from "@/app/actions/music_and_reviews_service";
 import {
   createReview,
@@ -192,6 +193,15 @@ export const useSearch = (discogsID: string) => {
     queryKey: ["searchAlbum", discogsID],
     queryFn: () => getSearch(discogsID),
     enabled: !!discogsID && discogsID.length > 0,
+    staleTime: 10 * 60 * 1000, // Cache search results for 10 minutes
+  });
+};
+
+export const useSearchUsers = (query: string) => {
+  return useQuery({
+    queryKey: ["searchUsers", query],
+    queryFn: () => getSearchUsers(query),
+    enabled: !!query && query.length > 0,
     staleTime: 10 * 60 * 1000, // Cache search results for 10 minutes
   });
 };
