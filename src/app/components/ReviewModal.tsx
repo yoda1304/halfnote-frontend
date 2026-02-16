@@ -36,7 +36,7 @@ export default function WriteReview({
       .max(2000, "Review cannot exceed 2000 characters")
       .matches(
         /^[a-zA-Z0-9\s.,!?'"()\-_@#$%&*+=/:;[\]{}|\\~`]*$/,
-        "Review contains invalid characters"
+        "Review contains invalid characters",
       ),
     rating: Yup.number()
       .min(1, "Please select a rating")
@@ -58,7 +58,6 @@ export default function WriteReview({
     };
 
     if (userReview) {
-      console.log("Editing existing review");
       editReviewMutation.mutate(
         {
           ...reviewData,
@@ -68,10 +67,9 @@ export default function WriteReview({
           onSettled: () => {
             router.back();
           },
-        }
+        },
       );
     } else {
-      console.log("Creating new review");
       createReviewMutation.mutate(reviewData);
     }
   };

@@ -7,7 +7,7 @@ const BASE_URL =
 export async function createSession(
   access_token: string,
   refresh_token: string,
-  username: string
+  username: string,
 ) {
   // Access token expires in 1 day (matches backend JWT config)
   const accessExpiresAt = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
@@ -40,7 +40,7 @@ export const EditProfile = async (
   bio?: string,
   location?: string,
   avatar?: File,
-  banner?: File
+  banner?: File,
 ) => {
   try {
     const cookieStore = await cookies();
@@ -88,7 +88,7 @@ export const RegisterUser = async (
   email: string,
   password: string,
   bio?: string,
-  avatar?: File
+  avatar?: File,
 ) => {
   try {
     const formData = new FormData();
@@ -106,7 +106,7 @@ export const RegisterUser = async (
 
     if (!response.ok) {
       throw new Error(
-        data.error || data.message || data.detail || "Registration failed"
+        data.error || data.message || data.detail || "Registration failed",
       );
     }
 
@@ -134,14 +134,14 @@ export const logoutUser = async () => {
     await deleteSession();
   } catch (error: unknown) {
     throw new Error(
-      error instanceof Error ? error.message : "Could not logout"
+      error instanceof Error ? error.message : "Could not logout",
     );
   }
 };
 //assumes no cookies are set
 export const LoginUser = async (
   username: string,
-  password: string
+  password: string,
 ): Promise<void> => {
   try {
     const response = await fetch(`${BASE_URL}/accounts/login/`, {
@@ -159,12 +159,11 @@ export const LoginUser = async (
     if (!response.ok) {
       const error = await response.json();
       throw new Error(
-        error.error || error.message || error.detail || "Login failed"
+        error.error || error.message || error.detail || "Login failed",
       );
     }
 
     const data = await response.json();
-    console.log("data login: ", data);
 
     if (!data.access_token || !data.refresh_token) {
       throw new Error("Invalid token data received");
@@ -175,7 +174,7 @@ export const LoginUser = async (
   } catch (error: unknown) {
     // Re-throw the error for the component to handle
     throw new Error(
-      error instanceof Error ? error.message : "An error occurred during login"
+      error instanceof Error ? error.message : "An error occurred during login",
     );
   }
 };

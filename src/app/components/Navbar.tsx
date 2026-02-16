@@ -9,7 +9,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "@/app/hooks";
 import Link from "next/link";
 import { SkeletonNavBar } from "./skeletons/SkeletonNavBar";
-import { AnimatePresence, motion, scale, transform } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { SearchDropdown } from "./SearchDropdown";
 import { useRecentSearches } from "@/app/hooks/useRecentSearches";
 import { useNewReleases, usePopularAlbums, useSearch } from "@/app/hooks";
@@ -21,7 +21,7 @@ export const NavBar = () => {
   const [onSearch, setOnSearch] = useState<boolean>(false);
   const [onAlbum, setOnAlbum] = useState<boolean>(false);
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
-  const { addSearch, recentSearches } = useRecentSearches();
+  const { addSearch } = useRecentSearches();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 

@@ -37,7 +37,6 @@ export interface Album {
 
 export interface Review {
   album_discogs_id?: string;
-  text: string;
   id: number;
   username: string;
   user_avatar: string;
@@ -106,7 +105,18 @@ export interface SearchResult {
   thumb?: string;
   genre?: string[];
   style?: string[];
+  artist_photo_url?: string;
 }
+
+export interface UserResult {
+  id: number;
+  username: string;
+  bio?: string;
+  avatar?: string;
+  is_following?: boolean;
+  is_staff?: boolean;
+}
+
 export interface Activity {
   id: number;
   activity_type:

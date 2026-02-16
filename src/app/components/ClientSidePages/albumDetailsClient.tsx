@@ -34,7 +34,6 @@ const AlbumDetailsClient = ({ user }: AlbumDetailsProps) => {
     Review | Activity | undefined
   >(undefined);
 
-  console.log(albumDetails);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: "center",
@@ -67,12 +66,11 @@ const AlbumDetailsClient = ({ user }: AlbumDetailsProps) => {
 
   // lowercase as backend retrieves usernames as lowercase
   const alreadyReviewed = albumDetails.reviews.find(
-    (review: Review) => review.username === user.username.toLowerCase()
+    (review: Review) => review.username === user.username.toLowerCase(),
   );
 
   const imageSrc =
     albumDetails.album.cover_url || albumDetails.album.cover_image;
-  console.log(albumDetails);
   return (
     <>
       <div className="grid grid-cols-1 gap-5 mb-5 lg:grid-cols-4 lg:w-[100%]">
@@ -139,7 +137,7 @@ const AlbumDetailsClient = ({ user }: AlbumDetailsProps) => {
                     {
                       empty: false,
                       outTen: true,
-                    }
+                    },
                   );
                   return (
                     ratingStampSrc && (
