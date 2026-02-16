@@ -5,7 +5,6 @@ const BASE_URL =
   (process.env.BASE_URL || "https://halfnote-backend.vercel.app") + "/api";
 
 export const getAlbumDetails = async (discogsID: string) => {
-  console.log("REFETCHING ALBUM DETAILS");
   try {
     const session = await verifySession();
     const response = await fetch(`${BASE_URL}/music/albums/${discogsID}/`, {

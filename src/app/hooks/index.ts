@@ -345,7 +345,6 @@ export const useCreateReview = (username: string) => {
     },
     onError: (error, variables, context) => {
       //show toast here
-      console.log("ERROR: ", error);
       console.error("Failed to create review:", error);
 
       // Rollback optimistic updates

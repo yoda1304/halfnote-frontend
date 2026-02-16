@@ -32,7 +32,6 @@ export const ExpandedReviewModal = ({
     if (!review) return null;
 
     if (isActivity(review)) {
-      console.log("ues");
       return {
         albumCover: review.review_details?.album.cover_url,
         albumTitle: review.review_details?.album.title,

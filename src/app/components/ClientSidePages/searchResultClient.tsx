@@ -5,7 +5,6 @@ import React from "react";
 import { SmallAlbumCard } from "../smallAlbumCard";
 import { SearchResult, UserResult } from "@/app/types/types";
 import { SmallUserCard } from "../smallUserCard";
-import { Sparkles } from "lucide-react";
 import { getArtistsFromAlbums } from "@/app/utils/calculations";
 import { SmallArtistCard } from "../smallArtistCard";
 
@@ -31,7 +30,6 @@ export const SearchResultPage = () => {
   const listeners = userList?.users || [];
 
   const artists = getArtistsFromAlbums(albums, query || "");
-  console.log(artists);
   if (!query) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
@@ -66,7 +64,7 @@ export const SearchResultPage = () => {
       {!hasResults ? (
         <div className="flex flex-col items-center h-full mt-20">
           <p className="another-heading2 text-3xl">
-            No results found for "{query}"
+            No results found for &quot;{query}&quot;
           </p>
         </div>
       ) : (
@@ -87,7 +85,7 @@ export const SearchResultPage = () => {
               </div>
             ) : (
               <p className="text-gray-400 italic another-heading5">
-                No albums found for "{query}".
+                No albums found for &quot;{query}&quot;.
               </p>
             )}
           </div>
@@ -106,7 +104,7 @@ export const SearchResultPage = () => {
                 </div>
               ) : (
                 <p className="text-gray-400 italic another-heading5">
-                  No artists found for "{query}".
+                  No artists found for &quot;{query}&quot;.
                 </p>
               )}
             </div>
@@ -124,7 +122,7 @@ export const SearchResultPage = () => {
                 </div>
               ) : (
                 <p className="text-gray-400 italic another-heading5">
-                  No listeners found for "{query}".
+                  No listeners found for &quot;{query}&quot;.
                 </p>
               )}
             </div>

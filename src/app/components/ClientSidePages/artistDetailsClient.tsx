@@ -2,7 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Icons } from "../../icons/icons";
 
 interface ArtistDetailsClientProps {
@@ -140,12 +139,12 @@ const ArtistDetailsClient = ({ artistName }: ArtistDetailsClientProps) => {
                 </div>
               </div>
               <p className="another-body italic text-base text-gray-700 leading-relaxed">
-                "he is good bunny to me"
+                &quot;he is good bunny to me&quot;
               </p>
               <div className="flex justify-between items-center pt-2">
                 <div className="flex gap-2">
                   <button className="another-heading6 text-[10px] border border-black rounded-full px-4 py-1.5 font-bold uppercase tracking-tighter">
-                    "Devil's Cut"
+                    &quot;Devil&apos;s Cut&quot;
                   </button>
                 </div>
                 <div className="flex items-center gap-4">
