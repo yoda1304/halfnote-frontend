@@ -12,7 +12,7 @@ type ActivityPageProps = {
   };
 };
 
-type ActivityFilterState = "following" | "friends" | "you";
+type ActivityFilterState = "incoming" | "friends" | "you";
 
 const extractReviewFromActivity = (activity: Activity): Review | null => {
   const rd = activity.review_details;
@@ -42,18 +42,25 @@ const extractReviewFromActivity = (activity: Activity): Review | null => {
 export default function ActivityPage({ user }: ActivityPageProps) {
   const { t } = useTranslation("activity");
 
-  const [filter, setFilter] = useState<ActivityFilterState>("following");
+  const [filter, setFilter] = useState<ActivityFilterState>("incoming");
 
-  const { data: youActivity = [] } = useOthersActivity(user.username, "you");
-  const { data: friendActivity = [] } = useOthersActivity(
+  const { data: youActivity = [], isLoading: isLoadingYou } = useOthersActivity(
     user.username,
-    "friends",
+    "you",
   );
+  const { data: friendActivity = [], isLoading: isLoadingFriends } =
+    useOthersActivity(user.username, "friends");
 
-  const { data: followingActivity = [] } = useOthersActivity(
-    user.username,
-    "incoming",
-  );
+  const { data: followingActivity = [], isLoading: isLoadingFollowing } =
+    useOthersActivity(user.username, "incoming");
+
+  console.log("[ActivityPage] Render", {
+    filter,
+    youCount: youActivity.length,
+    friendsCount: friendActivity.length,
+    followingCount: followingActivity.length,
+    isLoading: { isLoadingYou, isLoadingFriends, isLoadingFollowing },
+  });
 
   // Derive filtered activities dynamically using useMemo
   const filteredActivities = useMemo(() => {
@@ -62,6 +69,7 @@ export default function ActivityPage({ user }: ActivityPageProps) {
         return youActivity;
       case "friends":
         return friendActivity;
+      case "incoming":
       default:
         return followingActivity;
     }
@@ -77,22 +85,39 @@ export default function ActivityPage({ user }: ActivityPageProps) {
         </h1>
         <div className="flex gap-4">
           <Button
+            onClick={() => setFilter("incoming")}
+            isSelected={filter === "incoming"}
+          >
+            Following
+          </Button>
+          <Button
             onClick={() => setFilter("friends")}
             isSelected={filter === "friends"}
           >
-            Recent
+            Friends
           </Button>
           <Button
             onClick={() => setFilter("you")}
             isSelected={filter === "you"}
           >
-            Top
+            You
           </Button>
         </div>
       </div>
 
       {/* Scrollable list of cards */}
       <div className="overflow-y-auto min-h-[550px] max-h-[700px] pr-2 flex flex-col gap-4">
+        {(isLoadingYou || isLoadingFriends || isLoadingFollowing) && (
+          <p className="text-gray-500 italic">Loading activity...</p>
+        )}
+        {!isLoadingYou &&
+          !isLoadingFriends &&
+          !isLoadingFollowing &&
+          filteredActivities.length === 0 && (
+            <p className="text-gray-500 italic">
+              No activity found for this filter.
+            </p>
+          )}
         {filteredActivities.length > 0 &&
           filteredActivities.map((activity: Activity) => {
             const review = extractReviewFromActivity(activity);

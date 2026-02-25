@@ -10,7 +10,7 @@ export const SmallArtistCard = ({ artist }: SmallArtistCardProps) => {
   const router = useRouter();
   return (
     <div
-      className="w-full h-[80px] flex flex-row items-center border border-black rounded-xl bg-white overflow-hidden shadow-sm hover: cursor-pointer"
+      className="w-full h-[80px] flex flex-row items-center border border-black rounded-2xl bg-white overflow-hidden shadow-sm hover: cursor-pointer"
       onClick={() => router.push(`/artist/${artist.artist_name}`)}
     >
       <div className="w-[80px] h-[80px] shrink-0 border-r border-black relative">
