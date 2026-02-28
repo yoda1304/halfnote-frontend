@@ -1,13 +1,19 @@
 import React from "react";
 import Image from "next/image";
 import { SearchResult } from "@/app/types/types";
+import { useRouter } from "next/navigation";
 
 interface SmallAlbumCardProps {
   album: SearchResult;
 }
 export const SmallAlbumCard = ({ album }: SmallAlbumCardProps) => {
+  const router = useRouter();
+  console.log(album);
   return (
-    <div className="w-[330px] h-[450px] flex flex-col border-1 border-black shrink-0 overflow-hidden rounded-lg">
+    <div
+      className="w-[330px] h-[450px] flex flex-col border-1 border-black shrink-0 overflow-hidden rounded-2xl hover:cursor-pointer"
+      onClick={() => router.push(`/albums?query=${album.id}`)}
+    >
       <div className="w-full h-[340px] relative">
         <Image
           src={album.cover_image || ""}

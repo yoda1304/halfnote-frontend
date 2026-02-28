@@ -71,6 +71,8 @@ const AlbumDetailsClient = ({ user }: AlbumDetailsProps) => {
 
   const imageSrc =
     albumDetails.album.cover_url || albumDetails.album.cover_image;
+
+  const artistSrc = albumDetails.album.artist_photo_url;
   return (
     <>
       <div className="grid grid-cols-1 gap-5 mb-5 lg:grid-cols-4 lg:w-[100%]">

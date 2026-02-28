@@ -149,26 +149,32 @@ export const getUserActivity = async (username: string) => {
 };
 
 export const getOthersActivity = async (username: string, type: string) => {
+  console.error(
+    `[getOthersActivity] Called at ${new Date().toISOString()} for user: ${username}, type: ${type}`,
+  );
   const session = await verifySession();
   try {
-    const response = await fetch(`${BASE_URL}/music/activity/?type=${type}`, {
+    const url = `${BASE_URL}/music/activity/?type=${type}`;
+    console.log(`[getOthersActivity] Fetching: ${url}`);
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${session.access_token}`,
       },
       credentials: "include",
-      next: { revalidate: 0 },
-      cache: "no-store",
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || `Could not get ${type} activity`);
+      const errorText = await response.text();
+      console.error(`[getOthersActivity] Error response: ${errorText}`);
+      throw new Error(`Could not get ${type} activity: ${response.statusText}`);
     }
-    return await response.json();
+    const data = await response.json();
+    console.log(`[getOthersActivity] Success! Received ${data.length} items`);
+    return data;
   } catch (error: unknown) {
-    console.error("Profile fetch failed:", error);
+    console.error("[getOthersActivity] Failed:", error);
     throw new Error(
       error instanceof Error ? error.message : "Failed to get profile",
     );
