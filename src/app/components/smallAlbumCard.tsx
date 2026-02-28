@@ -12,7 +12,7 @@ export const SmallAlbumCard = ({ album }: SmallAlbumCardProps) => {
   return (
     <div
       className="w-[330px] h-[450px] flex flex-col border-1 border-black shrink-0 overflow-hidden rounded-2xl hover:cursor-pointer"
-      onClick={() => router.push(`/album?query=${album.id}`)}
+      onClick={() => router.push(`/albums?query=${album.id}`)}
     >
       <div className="w-full h-[340px] relative">
         <Image

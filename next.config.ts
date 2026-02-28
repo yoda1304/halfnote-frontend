@@ -2,11 +2,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["res.cloudinary.com", "i.discogs.com", "st.discogs.com"],
+    domains: [
+      "res.cloudinary.com",
+      "i.discogs.com",
+      "st.discogs.com",
+      "images.unsplash.com",
+    ],
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: '3mb',
+      bodySizeLimit: "3mb",
     },
   },
 };
