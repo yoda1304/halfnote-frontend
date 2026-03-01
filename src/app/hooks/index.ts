@@ -24,18 +24,19 @@ import {
   AlbumDetailData,
   SearchResult,
 } from "../types/types";
+import { queryKeys } from "@/app/lib/queryKeys";
+import { CACHE_TIMES } from "@/app/lib/constants";
 
 export const useUser = () =>
   useQuery<User, Error>({
-    queryKey: ["user"],
+    queryKey: queryKeys.user(),
     queryFn: () => getUser(),
   });
 
 export const useUserReviews = (username: string) =>
   useQuery<Review[]>({
-    queryKey: ["reviews", username],
+    queryKey: queryKeys.reviewsByUser(username),
     queryFn: () => getUserReviews(username),
-
     enabled: !!username,
   });
 
@@ -48,55 +49,59 @@ export const useToggleReview = (username: string, discogsId?: string) => {
 
     onMutate: async (reviewId) => {
       await Promise.all([
-        queryClient.cancelQueries({ queryKey: ["reviews", username] }),
-        queryClient.cancelQueries({ queryKey: ["activity", username] }),
+        queryClient.cancelQueries({ queryKey: queryKeys.reviewsByUser(username) }),
+        queryClient.cancelQueries({ queryKey: queryKeys.activityByUser(username) }),
         discogsId &&
-          queryClient.cancelQueries({ queryKey: ["albumDetails", discogsId] }),
+          queryClient.cancelQueries({ queryKey: queryKeys.albumDetails(discogsId) }),
       ]);
 
       const snapshots = {
-        reviews: queryClient.getQueryData(["reviews", username]),
-        activity: queryClient.getQueryData(["activity", username]),
+        reviews: queryClient.getQueryData(queryKeys.reviewsByUser(username)),
+        activity: queryClient.getQueryData(queryKeys.activityByUser(username)),
         album: discogsId
-          ? queryClient.getQueryData(["albumDetails", discogsId])
+          ? queryClient.getQueryData(queryKeys.albumDetails(discogsId))
           : undefined,
       };
 
       // Optimistic update: reviews
-      queryClient.setQueryData<Review[]>(["reviews", username], (old = []) =>
-        old.map((r) =>
-          r.id === reviewId
-            ? {
-                ...r,
-                is_liked_by_user: !r.is_liked_by_user,
-                likes_count: r.likes_count + (r.is_liked_by_user ? -1 : 1),
-              }
-            : r,
-        ),
+      queryClient.setQueryData<Review[]>(
+        queryKeys.reviewsByUser(username),
+        (old = []) =>
+          old.map((r) =>
+            r.id === reviewId
+              ? {
+                  ...r,
+                  is_liked_by_user: !r.is_liked_by_user,
+                  likes_count: r.likes_count + (r.is_liked_by_user ? -1 : 1),
+                }
+              : r,
+          ),
       );
 
       // Optimistic update: activity
-      queryClient.setQueryData<Activity[]>(["activity", username], (old = []) =>
-        old.map((a) =>
-          a.review_details && a.review_details.id === reviewId
-            ? {
-                ...a,
-                review_details: {
-                  ...a.review_details,
-                  is_liked_by_user: !a.review_details.is_liked_by_user,
-                  likes_count:
-                    (a.review_details.likes_count ?? 0) +
-                    (a.review_details.is_liked_by_user ? -1 : 1),
-                },
-              }
-            : a,
-        ),
+      queryClient.setQueryData<Activity[]>(
+        queryKeys.activityByUser(username),
+        (old = []) =>
+          old.map((a) =>
+            a.review_details && a.review_details.id === reviewId
+              ? {
+                  ...a,
+                  review_details: {
+                    ...a.review_details,
+                    is_liked_by_user: !a.review_details.is_liked_by_user,
+                    likes_count:
+                      (a.review_details.likes_count ?? 0) +
+                      (a.review_details.is_liked_by_user ? -1 : 1),
+                  },
+                }
+              : a,
+          ),
       );
 
       // Optimistic update: albumDetails
       if (discogsId) {
         queryClient.setQueryData<AlbumDetailData>(
-          ["albumDetails", discogsId],
+          queryKeys.albumDetails(discogsId),
           (old) =>
             old
               ? {
@@ -121,13 +126,13 @@ export const useToggleReview = (username: string, discogsId?: string) => {
 
     onError: (_err, _vars, ctx) => {
       if (ctx?.reviews) {
-        queryClient.setQueryData(["reviews", username], ctx.reviews);
+        queryClient.setQueryData(queryKeys.reviewsByUser(username), ctx.reviews);
       }
       if (ctx?.activity) {
-        queryClient.setQueryData(["activity", username], ctx.activity);
+        queryClient.setQueryData(queryKeys.activityByUser(username), ctx.activity);
       }
       if (discogsId && ctx?.album) {
-        queryClient.setQueryData(["albumDetails", discogsId], ctx.album);
+        queryClient.setQueryData(queryKeys.albumDetails(discogsId), ctx.album);
       }
     },
 
@@ -135,7 +140,7 @@ export const useToggleReview = (username: string, discogsId?: string) => {
       if (discogsId) {
         // Merge server truth into cache
         queryClient.setQueryData<AlbumDetailData>(
-          ["albumDetails", discogsId],
+          queryKeys.albumDetails(discogsId),
           (old) =>
             old
               ? {
@@ -150,14 +155,14 @@ export const useToggleReview = (username: string, discogsId?: string) => {
 
       // Invalidate queries to ensure fresh data on next mount/focus
       queryClient.invalidateQueries({
-        queryKey: ["reviews", username],
+        queryKey: queryKeys.reviewsByUser(username),
       });
       queryClient.invalidateQueries({
-        queryKey: ["activity", username],
+        queryKey: queryKeys.activityByUser(username),
       });
       if (discogsId) {
         queryClient.invalidateQueries({
-          queryKey: ["albumDetails", discogsId],
+          queryKey: queryKeys.albumDetails(discogsId),
         });
       }
     },
@@ -172,10 +177,10 @@ export const useToggleReview = (username: string, discogsId?: string) => {
 
 export const useUserActivity = (username: string) =>
   useQuery<Activity[], Error>({
-    queryKey: ["activity", username],
+    queryKey: queryKeys.activityByUser(username),
     queryFn: () => getUserActivity(username),
     enabled: !!username,
-    staleTime: 2 * 60 * 1000, // Activity data is fresh for 2 minutes
+    staleTime: CACHE_TIMES.ACTIVITY,
   });
 
 export const useOthersActivity = (
@@ -183,43 +188,35 @@ export const useOthersActivity = (
   type: "friends" | "you" | "incoming",
 ) =>
   useQuery<Activity[], Error>({
-    queryKey: ["other", username, type],
-    queryFn: async () => {
-      try {
-        const result = await getOthersActivity(username, type);
-        return result;
-      } catch (err) {
-        console.error(`[useOthersActivity] Error in queryFn for ${type}:`, err);
-        throw err;
-      }
-    },
+    queryKey: queryKeys.othersActivity(username, type),
+    queryFn: () => getOthersActivity(username, type),
     enabled: !!username && !!type,
   });
 
 export const useSearch = (discogsID: string) => {
   return useQuery({
-    queryKey: ["searchAlbum", discogsID],
+    queryKey: queryKeys.searchAlbums(discogsID),
     queryFn: () => getSearch(discogsID),
     enabled: !!discogsID && discogsID.length > 0,
-    staleTime: 10 * 60 * 1000, // Cache search results for 10 minutes
+    staleTime: CACHE_TIMES.SEARCH_RESULTS,
   });
 };
 
 export const useSearchUsers = (query: string) => {
   return useQuery({
-    queryKey: ["searchUsers", query],
+    queryKey: queryKeys.searchUsers(query),
     queryFn: () => getSearchUsers(query),
     enabled: !!query && query.length > 0,
-    staleTime: 10 * 60 * 1000, // Cache search results for 10 minutes
+    staleTime: CACHE_TIMES.USER_SEARCH,
   });
 };
 
 export const useAlbumDetails = (discogsID: string) => {
   return useQuery<AlbumDetailData, Error>({
-    queryKey: ["albumDetails", discogsID],
+    queryKey: queryKeys.albumDetails(discogsID),
     queryFn: () => getAlbumDetails(discogsID),
     enabled: !!discogsID,
-    staleTime: 1 * 60 * 1000, // Album details are fresh for 1 minute
+    staleTime: CACHE_TIMES.ALBUM_DETAILS,
   });
 };
 export const useCreateReview = (username: string) => {
@@ -240,24 +237,23 @@ export const useCreateReview = (username: string) => {
 
     onMutate: async (review) => {
       await Promise.all([
-        queryClient.cancelQueries({ queryKey: ["reviews", username] }),
-        queryClient.cancelQueries({ queryKey: ["activity", username] }),
+        queryClient.cancelQueries({ queryKey: queryKeys.reviewsByUser(username) }),
+        queryClient.cancelQueries({ queryKey: queryKeys.activityByUser(username) }),
         queryClient.cancelQueries({
-          queryKey: ["albumDetails", review.discogsId],
+          queryKey: queryKeys.albumDetails(review.discogsId),
         }),
       ]);
 
       const snapshots = {
-        reviews: queryClient.getQueryData(["reviews", username]),
-        activity: queryClient.getQueryData(["activity", username]),
-        album: queryClient.getQueryData<AlbumDetailData>([
-          "albumDetails",
-          review.discogsId,
-        ]),
+        reviews: queryClient.getQueryData(queryKeys.reviewsByUser(username)),
+        activity: queryClient.getQueryData(queryKeys.activityByUser(username)),
+        album: queryClient.getQueryData<AlbumDetailData>(
+          queryKeys.albumDetails(review.discogsId),
+        ),
       };
 
       // Get user data for avatar
-      const userData = queryClient.getQueryData<User>(["user"]);
+      const userData = queryClient.getQueryData<User>(queryKeys.user());
 
       // Create optimistic review with temporary ID
       const tempReview: Review = {
@@ -284,7 +280,7 @@ export const useCreateReview = (username: string) => {
 
       // Optimistically add to albumDetails
       queryClient.setQueryData<AlbumDetailData>(
-        ["albumDetails", review.discogsId],
+        queryKeys.albumDetails(review.discogsId),
         (old) => {
           if (!old) return old;
           const newReviewCount = old.review_count + 1;
@@ -309,10 +305,10 @@ export const useCreateReview = (username: string) => {
       );
 
       // Optimistically add to reviews list
-      queryClient.setQueryData<Review[]>(["reviews", username], (old) => [
-        tempReview,
-        ...(old || []),
-      ]);
+      queryClient.setQueryData<Review[]>(
+        queryKeys.reviewsByUser(username),
+        (old) => [tempReview, ...(old || [])],
+      );
 
       return snapshots;
     },
@@ -320,7 +316,7 @@ export const useCreateReview = (username: string) => {
     onSuccess: (serverData, variables) => {
       // Update with real server data
       queryClient.setQueryData<AlbumDetailData>(
-        ["albumDetails", variables.discogsId],
+        queryKeys.albumDetails(variables.discogsId),
         (old) => {
           if (!old) return old;
           return {
@@ -332,41 +328,46 @@ export const useCreateReview = (username: string) => {
         },
       );
 
-      queryClient.setQueryData<Review[]>(["reviews", username], (old) =>
-        old
-          ? old.map((r) =>
-              r.id < 0 && r.rating === serverData.rating ? serverData : r,
-            )
-          : old,
+      queryClient.setQueryData<Review[]>(
+        queryKeys.reviewsByUser(username),
+        (old) =>
+          old
+            ? old.map((r) =>
+                r.id < 0 && r.rating === serverData.rating ? serverData : r,
+              )
+            : old,
       );
 
       // Invalidate to ensure fresh data
       queryClient.invalidateQueries({
-        queryKey: ["reviews", username],
+        queryKey: queryKeys.reviewsByUser(username),
       });
       queryClient.invalidateQueries({
-        queryKey: ["activity", username],
+        queryKey: queryKeys.activityByUser(username),
       });
       queryClient.invalidateQueries({
-        queryKey: ["albumDetails", variables.discogsId],
+        queryKey: queryKeys.albumDetails(variables.discogsId),
       });
     },
     onError: (error, variables, context) => {
-      //show toast here
-      console.error("Failed to create review:", error);
-
       // Rollback optimistic updates
       if (context?.album) {
         queryClient.setQueryData(
-          ["albumDetails", variables.discogsId],
+          queryKeys.albumDetails(variables.discogsId),
           context.album,
         );
       }
       if (context?.reviews) {
-        queryClient.setQueryData(["reviews", username], context.reviews);
+        queryClient.setQueryData(
+          queryKeys.reviewsByUser(username),
+          context.reviews,
+        );
       }
       if (context?.activity) {
-        queryClient.setQueryData(["activity", username], context.activity);
+        queryClient.setQueryData(
+          queryKeys.activityByUser(username),
+          context.activity,
+        );
       }
     },
   });
@@ -398,22 +399,22 @@ export const useEditReview = (username: string) => {
 
     onMutate: async (vars) => {
       await Promise.all([
-        queryClient.cancelQueries({ queryKey: ["reviews", username] }),
-        queryClient.cancelQueries({ queryKey: ["activity", username] }),
+        queryClient.cancelQueries({ queryKey: queryKeys.reviewsByUser(username) }),
+        queryClient.cancelQueries({ queryKey: queryKeys.activityByUser(username) }),
         queryClient.cancelQueries({
-          queryKey: ["albumDetails", vars.discogsId],
+          queryKey: queryKeys.albumDetails(vars.discogsId),
         }),
       ]);
 
       const snapshots = {
-        reviews: queryClient.getQueryData(["reviews", username]),
-        activity: queryClient.getQueryData(["activity", username]),
-        album: queryClient.getQueryData(["albumDetails", vars.discogsId]),
+        reviews: queryClient.getQueryData(queryKeys.reviewsByUser(username)),
+        activity: queryClient.getQueryData(queryKeys.activityByUser(username)),
+        album: queryClient.getQueryData(queryKeys.albumDetails(vars.discogsId)),
       };
 
       // Optimistic: albumDetails
       queryClient.setQueryData<AlbumDetailData>(
-        ["albumDetails", vars.discogsId],
+        queryKeys.albumDetails(vars.discogsId),
         (old) => {
           if (!old) return old;
           const updatedReviews = old.reviews.map((r) =>
@@ -451,46 +452,50 @@ export const useEditReview = (username: string) => {
       );
 
       // Optimistic: reviews
-      queryClient.setQueryData<Review[]>(["reviews", username], (old) =>
-        old
-          ? old.map((r) =>
-              r.id === vars.reviewId
-                ? {
-                    ...r,
-                    rating: vars.ratingNumber,
-                    content: vars.description,
-                    user_genres: vars.genres.map((name, idx) => ({
-                      id: idx,
-                      name,
-                    })),
-                    is_liked_by_user: r.is_liked_by_user,
-                  }
-                : r,
-            )
-          : old,
-      );
-
-      // Optimistic: activity
-      queryClient.setQueryData<Activity[]>(["activity", username], (old) =>
-        old
-          ? old.map((a) =>
-              a.review_details && a.review_details.id === vars.reviewId
-                ? {
-                    ...a,
-                    review_details: {
-                      ...a.review_details,
+      queryClient.setQueryData<Review[]>(
+        queryKeys.reviewsByUser(username),
+        (old) =>
+          old
+            ? old.map((r) =>
+                r.id === vars.reviewId
+                  ? {
+                      ...r,
                       rating: vars.ratingNumber,
                       content: vars.description,
                       user_genres: vars.genres.map((name, idx) => ({
                         id: idx,
                         name,
                       })),
-                      is_liked_by_user: a.review_details.is_liked_by_user,
-                    },
-                  }
-                : a,
-            )
-          : old,
+                      is_liked_by_user: r.is_liked_by_user,
+                    }
+                  : r,
+              )
+            : old,
+      );
+
+      // Optimistic: activity
+      queryClient.setQueryData<Activity[]>(
+        queryKeys.activityByUser(username),
+        (old) =>
+          old
+            ? old.map((a) =>
+                a.review_details && a.review_details.id === vars.reviewId
+                  ? {
+                      ...a,
+                      review_details: {
+                        ...a.review_details,
+                        rating: vars.ratingNumber,
+                        content: vars.description,
+                        user_genres: vars.genres.map((name, idx) => ({
+                          id: idx,
+                          name,
+                        })),
+                        is_liked_by_user: a.review_details.is_liked_by_user,
+                      },
+                    }
+                  : a,
+              )
+            : old,
       );
 
       return snapshots;
@@ -498,20 +503,29 @@ export const useEditReview = (username: string) => {
 
     onError: (_err, vars, ctx) => {
       if (ctx?.reviews) {
-        queryClient.setQueryData(["reviews", username], ctx.reviews);
+        queryClient.setQueryData(
+          queryKeys.reviewsByUser(username),
+          ctx.reviews,
+        );
       }
       if (ctx?.activity) {
-        queryClient.setQueryData(["activity", username], ctx.activity);
+        queryClient.setQueryData(
+          queryKeys.activityByUser(username),
+          ctx.activity,
+        );
       }
       if (ctx?.album) {
-        queryClient.setQueryData(["albumDetails", vars.discogsId], ctx.album);
+        queryClient.setQueryData(
+          queryKeys.albumDetails(vars.discogsId),
+          ctx.album,
+        );
       }
     },
 
     onSuccess: (serverData) => {
       // Merge server truth into cache
       queryClient.setQueryData<AlbumDetailData>(
-        ["albumDetails", serverData.album_discogs_id],
+        queryKeys.albumDetails(serverData.album_discogs_id),
         (old) =>
           old
             ? {
@@ -525,13 +539,13 @@ export const useEditReview = (username: string) => {
 
       // Invalidate queries to ensure fresh data
       queryClient.invalidateQueries({
-        queryKey: ["reviews", username],
+        queryKey: queryKeys.reviewsByUser(username),
       });
       queryClient.invalidateQueries({
-        queryKey: ["activity", username],
+        queryKey: queryKeys.activityByUser(username),
       });
       queryClient.invalidateQueries({
-        queryKey: ["albumDetails", serverData.album_discogs_id],
+        queryKey: queryKeys.albumDetails(serverData.album_discogs_id),
       });
     },
   });
@@ -565,13 +579,13 @@ export const useEditProfile = () => {
 
     onMutate: async (vars) => {
       // Cancel outgoing user queries
-      await queryClient.cancelQueries({ queryKey: ["user"] });
+      await queryClient.cancelQueries({ queryKey: queryKeys.user() });
 
       // Snapshot current user data
-      const previousUser = queryClient.getQueryData<User>(["user"]);
+      const previousUser = queryClient.getQueryData<User>(queryKeys.user());
 
       // Optimistically update user data
-      queryClient.setQueryData<User>(["user"], (old) => {
+      queryClient.setQueryData<User>(queryKeys.user(), (old) => {
         if (!old) return old;
 
         return {
@@ -590,16 +604,16 @@ export const useEditProfile = () => {
     onError: (_err, _vars, context) => {
       // Rollback to previous user data on error
       if (context?.previousUser) {
-        queryClient.setQueryData(["user"], context.previousUser);
+        queryClient.setQueryData(queryKeys.user(), context.previousUser);
       }
     },
 
     onSuccess: (serverData) => {
       // Update with server response (includes uploaded image URLs)
-      queryClient.setQueryData(["user"], serverData);
+      queryClient.setQueryData(queryKeys.user(), serverData);
 
       // Invalidate related queries to ensure fresh data
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.user() });
     },
   });
 
@@ -613,16 +627,16 @@ export const useEditProfile = () => {
 
 export const useNewReleases = (limit: number = 2) => {
   return useQuery<{ results: SearchResult[]; cached: boolean }, Error>({
-    queryKey: ["newReleases", limit],
+    queryKey: queryKeys.newReleases(limit),
     queryFn: () => getNewReleases(limit),
-    staleTime: 60 * 60 * 1000,
+    staleTime: CACHE_TIMES.DISCOVERY,
   });
 };
 
 export const usePopularAlbums = (limit: number = 4) => {
   return useQuery<{ results: SearchResult[]; cached: boolean }, Error>({
-    queryKey: ["popularAlbums", limit],
+    queryKey: queryKeys.popularAlbums(limit),
     queryFn: () => getPopularAlbums(limit),
-    staleTime: 60 * 60 * 1000,
+    staleTime: CACHE_TIMES.DISCOVERY,
   });
 };
