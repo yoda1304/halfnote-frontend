@@ -8,6 +8,8 @@
  *   - queryKeys.activity(username, type) → ["activity", username, type]
  */
 
+import { ActivityFilterType } from "./types/api";
+
 export const queryKeys = {
   // User authentication & profile
   user: () => ["user"] as const,
@@ -21,7 +23,7 @@ export const queryKeys = {
   // Activity feeds
   activity: () => ["activity"],
   activityByUser: (username: string) => ["activity", username] as const,
-  othersActivity: (username: string, type: "incoming" | "friends" | "you") =>
+  othersActivity: (username: string, type: ActivityFilterType) =>
     ["other", username, type] as const,
 
   // Albums & album details

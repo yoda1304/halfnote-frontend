@@ -26,6 +26,7 @@ import {
 } from "../types/types";
 import { queryKeys } from "@/app/lib/queryKeys";
 import { CACHE_TIMES } from "@/app/lib/constants";
+import { ActivityFilterType } from "@/app/lib/types/api";
 
 export const useUser = () =>
   useQuery<User, Error>({
@@ -185,7 +186,7 @@ export const useUserActivity = (username: string) =>
 
 export const useOthersActivity = (
   username: string,
-  type: "friends" | "you" | "incoming",
+  type: ActivityFilterType,
 ) =>
   useQuery<Activity[], Error>({
     queryKey: queryKeys.othersActivity(username, type),

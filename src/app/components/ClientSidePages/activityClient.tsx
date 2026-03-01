@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { Activity, Review } from "../../types/types";
+import { ActivityFilterType, ACTIVITY_FILTER_LABELS } from "@/app/lib/types/api";
 import { useOthersActivity } from "@/app/hooks";
 import { Button } from "../general/Button";
 import { ProperReviewCard } from "./ProperReviewCard";
@@ -10,8 +11,6 @@ type ActivityPageProps = {
     username: string;
   };
 };
-
-type ActivityFilterState = "incoming" | "friends" | "you";
 
 const extractReviewFromActivity = (activity: Activity): Review | null => {
   const rd = activity.review_details;
@@ -39,26 +38,28 @@ const extractReviewFromActivity = (activity: Activity): Review | null => {
 };
 
 export default function ActivityPage({ user }: ActivityPageProps) {
-  const [filter, setFilter] = useState<ActivityFilterState>("incoming");
+  const [filter, setFilter] = useState<ActivityFilterType>(
+    ActivityFilterType.INCOMING,
+  );
 
   const { data: youActivity = [], isLoading: isLoadingYou } = useOthersActivity(
     user.username,
-    "you",
+    ActivityFilterType.YOU,
   );
   const { data: friendActivity = [], isLoading: isLoadingFriends } =
-    useOthersActivity(user.username, "friends");
+    useOthersActivity(user.username, ActivityFilterType.FRIENDS);
 
   const { data: followingActivity = [], isLoading: isLoadingFollowing } =
-    useOthersActivity(user.username, "incoming");
+    useOthersActivity(user.username, ActivityFilterType.INCOMING);
 
   // Derive filtered activities dynamically using useMemo
   const filteredActivities = useMemo(() => {
     switch (filter) {
-      case "you":
+      case ActivityFilterType.YOU:
         return youActivity;
-      case "friends":
+      case ActivityFilterType.FRIENDS:
         return friendActivity;
-      case "incoming":
+      case ActivityFilterType.INCOMING:
       default:
         return followingActivity;
     }
@@ -68,28 +69,25 @@ export default function ActivityPage({ user }: ActivityPageProps) {
     <div className="flex flex-col border-black border-2 bg-white rounded-xl pb-10 h-auto px-9 py-9 w-full">
       {/* Header + Tabs */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="another-heading1 text-[42px]">
-          {/* {t("reviews.activity")} */}
-          Activity
-        </h1>
+        <h1 className="another-heading1 text-[42px]">Activity</h1>
         <div className="flex gap-4">
           <Button
-            onClick={() => setFilter("incoming")}
-            isSelected={filter === "incoming"}
+            onClick={() => setFilter(ActivityFilterType.INCOMING)}
+            isSelected={filter === ActivityFilterType.INCOMING}
           >
-            Following
+            {ACTIVITY_FILTER_LABELS[ActivityFilterType.INCOMING]}
           </Button>
           <Button
-            onClick={() => setFilter("friends")}
-            isSelected={filter === "friends"}
+            onClick={() => setFilter(ActivityFilterType.FRIENDS)}
+            isSelected={filter === ActivityFilterType.FRIENDS}
           >
-            Friends
+            {ACTIVITY_FILTER_LABELS[ActivityFilterType.FRIENDS]}
           </Button>
           <Button
-            onClick={() => setFilter("you")}
-            isSelected={filter === "you"}
+            onClick={() => setFilter(ActivityFilterType.YOU)}
+            isSelected={filter === ActivityFilterType.YOU}
           >
-            You
+            {ACTIVITY_FILTER_LABELS[ActivityFilterType.YOU]}
           </Button>
         </div>
       </div>
