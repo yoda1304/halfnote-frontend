@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getUser } from "@/app/actions/dal";
 import {
   getSearch,
@@ -16,6 +16,7 @@ import {
   toggleLike,
 } from "@/app/actions/reviews_service";
 import { EditProfile } from "@/app/actions/account_management_service";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   User,
   Activity,
@@ -183,7 +184,15 @@ export const useOthersActivity = (
 ) =>
   useQuery<Activity[], Error>({
     queryKey: ["other", username, type],
-    queryFn: () => getOthersActivity(username, type),
+    queryFn: async () => {
+      try {
+        const result = await getOthersActivity(username, type);
+        return result;
+      } catch (err) {
+        console.error(`[useOthersActivity] Error in queryFn for ${type}:`, err);
+        throw err;
+      }
+    },
     enabled: !!username && !!type,
   });
 
