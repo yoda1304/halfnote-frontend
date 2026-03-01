@@ -8,7 +8,6 @@ interface SmallAlbumCardProps {
 }
 export const SmallAlbumCard = ({ album }: SmallAlbumCardProps) => {
   const router = useRouter();
-  console.log(album);
   return (
     <div
       className="w-[330px] h-[450px] flex flex-col border-1 border-black shrink-0 overflow-hidden rounded-2xl hover:cursor-pointer"

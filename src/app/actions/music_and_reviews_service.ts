@@ -149,13 +149,9 @@ export const getUserActivity = async (username: string) => {
 };
 
 export const getOthersActivity = async (username: string, type: string) => {
-  console.error(
-    `[getOthersActivity] Called at ${new Date().toISOString()} for user: ${username}, type: ${type}`,
-  );
   const session = await verifySession();
   try {
     const url = `${BASE_URL}/music/activity/?type=${type}`;
-    console.log(`[getOthersActivity] Fetching: ${url}`);
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -166,17 +162,13 @@ export const getOthersActivity = async (username: string, type: string) => {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`[getOthersActivity] Error response: ${errorText}`);
       throw new Error(`Could not get ${type} activity: ${response.statusText}`);
     }
     const data = await response.json();
-    console.log(`[getOthersActivity] Success! Received ${data.length} items`);
     return data;
   } catch (error: unknown) {
-    console.error("[getOthersActivity] Failed:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Failed to get profile",
+      error instanceof Error ? error.message : "Failed to get activity",
     );
   }
 };

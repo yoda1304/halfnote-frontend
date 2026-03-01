@@ -1,7 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
 import { Activity, Review } from "../../types/types";
-import { useTranslation } from "react-i18next";
 import { useOthersActivity } from "@/app/hooks";
 import { Button } from "../general/Button";
 import { ProperReviewCard } from "./ProperReviewCard";
@@ -40,8 +39,6 @@ const extractReviewFromActivity = (activity: Activity): Review | null => {
 };
 
 export default function ActivityPage({ user }: ActivityPageProps) {
-  const { t } = useTranslation("activity");
-
   const [filter, setFilter] = useState<ActivityFilterState>("incoming");
 
   const { data: youActivity = [], isLoading: isLoadingYou } = useOthersActivity(
@@ -53,14 +50,6 @@ export default function ActivityPage({ user }: ActivityPageProps) {
 
   const { data: followingActivity = [], isLoading: isLoadingFollowing } =
     useOthersActivity(user.username, "incoming");
-
-  console.log("[ActivityPage] Render", {
-    filter,
-    youCount: youActivity.length,
-    friendsCount: friendActivity.length,
-    followingCount: followingActivity.length,
-    isLoading: { isLoadingYou, isLoadingFriends, isLoadingFollowing },
-  });
 
   // Derive filtered activities dynamically using useMemo
   const filteredActivities = useMemo(() => {

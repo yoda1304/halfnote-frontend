@@ -3,12 +3,11 @@
 import React from "react";
 import Image from "next/image";
 import { Icons } from "../../icons/icons";
+import { useSearchParams } from "next/navigation";
 
-interface ArtistDetailsClientProps {
-  artistName: string;
-}
-
-const ArtistDetailsClient = ({ artistName }: ArtistDetailsClientProps) => {
+const ArtistDetailsClient = () => {
+  const searchParams = useSearchParams();
+  const artistName = searchParams.get("name");
   // Placeholder data for now as requested
   const albums = [
     { title: "Ö", artist: "Fcukers", cover: "/sample_images/lorde.jpeg" },

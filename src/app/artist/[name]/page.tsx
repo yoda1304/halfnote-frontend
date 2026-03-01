@@ -1,17 +1,12 @@
-import React from "react";
+import { getSafeSession } from "@/app/actions/dal";
+import { redirect } from "next/navigation";
 import ArtistDetailsClient from "@/app/components/ClientSidePages/artistDetailsClient";
+export default async function Page() {
+  const session = await getSafeSession();
 
-interface ArtistPageProps {
-  params: Promise<{ name: string }>;
-}
+  if (!session.isAuth) {
+    redirect("/");
+  }
 
-export default async function ArtistPage({ params }: ArtistPageProps) {
-  const resolvedParams = await params;
-  const decodedName = decodeURIComponent(resolvedParams.name);
-
-  return (
-    <div className="w-full min-h-screen">
-      <ArtistDetailsClient artistName={decodedName} />
-    </div>
-  );
+  return <ArtistDetailsClient />;
 }
