@@ -11,6 +11,8 @@
 import { ActivityFilterType } from "./types/api";
 
 export const queryKeys = {
+  // Artist details
+  artistDetails: (artistName: string) => ["artistDetails", artistName] as const,
   // User authentication & profile
   user: () => ["user"] as const,
   profile: (userId: string | number) => ["profile", userId] as const,

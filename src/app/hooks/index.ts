@@ -9,6 +9,7 @@ import {
   getNewReleases,
   getPopularAlbums,
   getSearchUsers,
+  getArtistDetails,
 } from "@/app/actions/music_and_reviews_service";
 import {
   createReview,
@@ -23,6 +24,7 @@ import {
   Review,
   AlbumDetailData,
   SearchResult,
+  ArtistDetails,
 } from "../types/types";
 import { queryKeys } from "@/app/lib/queryKeys";
 import { CACHE_TIMES } from "@/app/lib/constants";
@@ -658,3 +660,11 @@ export const usePopularAlbums = (limit: number = 4) => {
     staleTime: CACHE_TIMES.DISCOVERY,
   });
 };
+
+export const useArtistDetails = (artistName: string) =>
+  useQuery<ArtistDetails, Error>({
+    queryKey: queryKeys.artistDetails(artistName),
+    queryFn: () => getArtistDetails(artistName),
+    enabled: !!artistName,
+    staleTime: CACHE_TIMES.ALBUM_DETAILS, // 30 min cache to match backend
+  });

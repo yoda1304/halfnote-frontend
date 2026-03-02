@@ -89,7 +89,7 @@ export const SearchDropdown = ({
           {renderAutocompleteItem(query, "raw-query", true)}
           {searchResults
             .filter((item) => item.title.toLowerCase() !== query.toLowerCase())
-            .map((item) => renderAutocompleteItem(item.title, item.id))}
+            .map((item) => renderAutocompleteItem(item.title, item.id.toString()))}
         </div>
       ) : (
         <>

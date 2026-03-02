@@ -224,3 +224,31 @@ export const getPopularAlbums = async (limit: number = 10) => {
     );
   }
 };
+
+export const getArtistDetails = async (artistName: string) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/music/artists/${encodeURIComponent(artistName)}/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 0 },
+        cache: "no-store",
+      },
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(
+        error.message || `Could not get artist details for ${artistName}`,
+      );
+    }
+    return await response.json();
+  } catch (error: unknown) {
+    console.error("Artist details fetch failed:", error);
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to get artist details",
+    );
+  }
+};

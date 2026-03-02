@@ -107,14 +107,13 @@ export interface Comment {
 }
 
 export interface UserData {
-  id: number;
   username: string;
   avatar: string | null;
   is_staff?: boolean;
 }
 
 export interface SearchResult {
-  id: string; // Discogs ID
+  id: number; // Discogs numeric ID from search endpoint
   title: string;
   artist: string;
   year?: number;
@@ -123,18 +122,29 @@ export interface SearchResult {
   genre?: string[];
   style?: string[];
   artist_photo_url?: string;
-  discogs_id?: string; // Alias for id
+}
+
+export interface TopRatedAlbum {
+  album_title: string;
+  artist: string;
+  cover_url: string | null;
+  rating: number;
+  discogs_id: string;
 }
 
 export interface UserResult {
   id: number;
   username: string;
-  display_name: string;
-  avatar: string | null;
+  display_name?: string; // From UserFollowSerializer, absent from UserSerializer
+  email?: string; // From UserSerializer (search results)
+  name?: string; // From UserSerializer (search results)
   bio?: string;
+  location?: string; // From UserSerializer (search results)
+  avatar: string | null;
   follower_count: number;
   following_count: number;
   review_count: number;
+  top_rated_albums?: TopRatedAlbum[]; // From UserSerializer (search results only)
   is_following: boolean;
   is_staff?: boolean;
 }
@@ -229,6 +239,28 @@ export interface ListSummary {
   }>;
 }
 
+// ============= Artist Details =============
+
+export interface ArtistAlbum {
+  id: string; // UUID
+  title: string;
+  artist: string;
+  year?: number;
+  cover_url: string | null;
+  discogs_id: string;
+  avg_rating: number | null;
+  review_count: number;
+}
+
+export interface ArtistDetails {
+  name: string;
+  image: string | null;
+  bio: string | null;
+  albums: ArtistAlbum[];
+  album_count: number;
+  average_rating: number | null;
+}
+
 // ============= This Day In History =============
 
 export interface ThisDayInHistory {
@@ -237,6 +269,27 @@ export interface ThisDayInHistory {
   title: string;
   description: string;
   year?: number;
+}
+
+export interface ThisDayInHistoryResponse {
+  facts: ThisDayInHistory[];
+  date: string; // ISO date string YYYY-MM-DD
+}
+
+export interface ListsPageResponse {
+  lists: ListSummary[];
+  total_count: number;
+  has_more: boolean;
+}
+
+// ============= Authentication Response =============
+
+export interface AuthResponse {
+  username: string;
+  bio: string | null;
+  avatar: string | null;
+  access_token: string;
+  refresh_token: string;
 }
 
 // ============= Like & Follow Response Types =============
@@ -256,6 +309,11 @@ export interface ReviewLikeResponse {
 export interface ListLikeResponse {
   action: "liked" | "unliked";
   like_count: number;
+}
+
+export interface PinReviewResponse {
+  pinned: boolean;
+  message: string;
 }
 
 // ============= Likes List Response =============
@@ -290,6 +348,14 @@ export interface GenreStatsResponse {
   user: string;
   genres: Genre[];
   message: string;
+}
+
+export interface GenresResponse {
+  genres: Genre[];
+}
+
+export interface CommentsResponse {
+  comments: Comment[];
 }
 
 // ============= Favorite Albums Response =============
