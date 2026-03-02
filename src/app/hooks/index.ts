@@ -50,10 +50,16 @@ export const useToggleReview = (username: string, discogsId?: string) => {
 
     onMutate: async (reviewId) => {
       await Promise.all([
-        queryClient.cancelQueries({ queryKey: queryKeys.reviewsByUser(username) }),
-        queryClient.cancelQueries({ queryKey: queryKeys.activityByUser(username) }),
+        queryClient.cancelQueries({
+          queryKey: queryKeys.reviewsByUser(username),
+        }),
+        queryClient.cancelQueries({
+          queryKey: queryKeys.activityByUser(username),
+        }),
         discogsId &&
-          queryClient.cancelQueries({ queryKey: queryKeys.albumDetails(discogsId) }),
+          queryClient.cancelQueries({
+            queryKey: queryKeys.albumDetails(discogsId),
+          }),
       ]);
 
       const snapshots = {
@@ -127,10 +133,16 @@ export const useToggleReview = (username: string, discogsId?: string) => {
 
     onError: (_err, _vars, ctx) => {
       if (ctx?.reviews) {
-        queryClient.setQueryData(queryKeys.reviewsByUser(username), ctx.reviews);
+        queryClient.setQueryData(
+          queryKeys.reviewsByUser(username),
+          ctx.reviews,
+        );
       }
       if (ctx?.activity) {
-        queryClient.setQueryData(queryKeys.activityByUser(username), ctx.activity);
+        queryClient.setQueryData(
+          queryKeys.activityByUser(username),
+          ctx.activity,
+        );
       }
       if (discogsId && ctx?.album) {
         queryClient.setQueryData(queryKeys.albumDetails(discogsId), ctx.album);
@@ -184,10 +196,7 @@ export const useUserActivity = (username: string) =>
     staleTime: CACHE_TIMES.ACTIVITY,
   });
 
-export const useOthersActivity = (
-  username: string,
-  type: ActivityFilterType,
-) =>
+export const useOthersActivity = (username: string, type: ActivityFilterType) =>
   useQuery<Activity[], Error>({
     queryKey: queryKeys.othersActivity(username, type),
     queryFn: () => getOthersActivity(username, type),
@@ -238,8 +247,12 @@ export const useCreateReview = (username: string) => {
 
     onMutate: async (review) => {
       await Promise.all([
-        queryClient.cancelQueries({ queryKey: queryKeys.reviewsByUser(username) }),
-        queryClient.cancelQueries({ queryKey: queryKeys.activityByUser(username) }),
+        queryClient.cancelQueries({
+          queryKey: queryKeys.reviewsByUser(username),
+        }),
+        queryClient.cancelQueries({
+          queryKey: queryKeys.activityByUser(username),
+        }),
         queryClient.cancelQueries({
           queryKey: queryKeys.albumDetails(review.discogsId),
         }),
@@ -266,17 +279,16 @@ export const useCreateReview = (username: string) => {
         likes_count: 0,
         comments_count: 0,
         username: username.toLowerCase(),
-        user_avatar: userData?.avatar || "/default-avatar.png",
+        user_avatar: userData?.avatar || null,
         user_is_staff: userData?.is_staff || false,
         created_at: new Date().toISOString(),
         album_title: snapshots.album?.album.title || "",
         album_artist: snapshots.album?.album.artist || "",
-        album_cover:
-          snapshots.album?.album.cover_url ||
-          snapshots.album?.album.cover_image ||
-          "/default-album.png",
+        album_cover: snapshots.album?.album.cover_url || null,
+        album_artist_photo: snapshots.album?.album.artist_photo_url || null,
+        album_year: snapshots.album?.album.year,
         is_pinned: false,
-        user_genres: review.genres.map((name, idx) => ({ id: idx, name })),
+        user_genres: review.genres.map((name) => ({ id: 0, name })), // Temporary ID, will be replaced by server
       };
 
       // Optimistically add to albumDetails
@@ -387,6 +399,7 @@ export const useEditReview = (username: string) => {
     mutationKey: ["editReview"],
     mutationFn: async ({
       reviewId,
+      discogsId,
       ratingNumber,
       description,
       genres,
@@ -400,8 +413,12 @@ export const useEditReview = (username: string) => {
 
     onMutate: async (vars) => {
       await Promise.all([
-        queryClient.cancelQueries({ queryKey: queryKeys.reviewsByUser(username) }),
-        queryClient.cancelQueries({ queryKey: queryKeys.activityByUser(username) }),
+        queryClient.cancelQueries({
+          queryKey: queryKeys.reviewsByUser(username),
+        }),
+        queryClient.cancelQueries({
+          queryKey: queryKeys.activityByUser(username),
+        }),
         queryClient.cancelQueries({
           queryKey: queryKeys.albumDetails(vars.discogsId),
         }),
@@ -424,8 +441,8 @@ export const useEditReview = (username: string) => {
                   ...r,
                   rating: vars.ratingNumber,
                   content: vars.description,
-                  user_genres: vars.genres.map((name, idx) => ({
-                    id: idx,
+                  user_genres: vars.genres.map((name) => ({
+                    id: 0,
                     name,
                   })),
                   is_liked_by_user: r.is_liked_by_user,
@@ -463,8 +480,8 @@ export const useEditReview = (username: string) => {
                       ...r,
                       rating: vars.ratingNumber,
                       content: vars.description,
-                      user_genres: vars.genres.map((name, idx) => ({
-                        id: idx,
+                      user_genres: vars.genres.map((name) => ({
+                        id: 0,
                         name,
                       })),
                       is_liked_by_user: r.is_liked_by_user,
@@ -487,8 +504,8 @@ export const useEditReview = (username: string) => {
                         ...a.review_details,
                         rating: vars.ratingNumber,
                         content: vars.description,
-                        user_genres: vars.genres.map((name, idx) => ({
-                          id: idx,
+                        user_genres: vars.genres.map((name) => ({
+                          id: 0,
                           name,
                         })),
                         is_liked_by_user: a.review_details.is_liked_by_user,
