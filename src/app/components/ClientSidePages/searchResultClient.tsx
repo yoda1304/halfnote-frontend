@@ -2,11 +2,11 @@
 import { useSearch, useSearchUsers } from "@/app/hooks";
 import { useSearchParams } from "next/navigation";
 import React from "react";
-import { SmallAlbumCard } from "../smallAlbumCard";
+import { SmallAlbumCard } from "../SmallAlbumCard";
 import { SearchResult, UserResult } from "@/app/types/types";
-import { SmallUserCard } from "../smallUserCard";
+import { SmallUserCard } from "../SmallUserCard";
 import { getArtistsFromAlbums } from "@/app/utils/calculations";
-import { SmallArtistCard } from "../smallArtistCard";
+import { SmallArtistCard } from "../SmallArtistCard";
 
 export const SearchResultPage = () => {
   const searchParams = useSearchParams();
