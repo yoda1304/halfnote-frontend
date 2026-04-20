@@ -12,8 +12,6 @@ import { SkeletonNavBar } from "./skeletons/SkeletonNavBar";
 import { AnimatePresence, motion } from "framer-motion";
 import { SearchDropdown } from "./SearchDropdown";
 import { useRecentSearches } from "@/app/hooks/useRecentSearches";
-import { useNewReleases, usePopularAlbums, useSearchAlbums } from "@/app/hooks";
-import { useDebounce } from "@/app/hooks/useDebounce";
 export const NavBar = () => {
   const router = useRouter();
   const path = usePathname();
@@ -23,12 +21,6 @@ export const NavBar = () => {
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   const { addSearch } = useRecentSearches();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
-
-  const { data: searchResults } = useSearchAlbums(debouncedSearchQuery);
-
-  const { data: newReleases } = useNewReleases();
-  const { data: popularAlbums } = usePopularAlbums();
   // const [onWholeNote, setOnWholeNote] = useState<boolean>(false);
   const isWholeNote = path.startsWith("/wholenote");
   useEffect(() => {
@@ -257,9 +249,6 @@ export const NavBar = () => {
           <AnimatePresence>
             {isSearchFocused && (
               <SearchDropdown
-                newReleases={newReleases?.results || []}
-                popularAlbums={popularAlbums?.results || []}
-                searchResults={searchResults?.results || []}
                 query={searchQuery}
                 onClose={() => setIsSearchFocused(false)}
                 setSearchQuery={setSearchQuery}
