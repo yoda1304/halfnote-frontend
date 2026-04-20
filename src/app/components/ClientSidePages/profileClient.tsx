@@ -276,63 +276,67 @@ export default function ProfilePage({ user }: ProfilePageProps) {
                 <SkeletonRecentActivityCard key={index} />
               ))
             ) : filter === "reviewed" && reviewedActivity.length ? (
-              reviewedActivity.map((activity) => (
-                <div
-                  className={`mb-2 ${activity.review_details.content.length > 0 &&
-                    "cursor-pointer"
-                    }`}
-                  key={activity.id}
-                  onClick={() => {
-                    if (activity.review_details.content.length > 0) {
-                      setChosenReview(activity);
-                      setOpenReview(true);
-                    }
-                  }}
-                >
-                  <RecentActivityCard
+              reviewedActivity.map((activity) =>
+                activity.review_details ? (
+                  <div
+                    className={`mb-2 ${activity.review_details.content.length > 0 &&
+                      "cursor-pointer"
+                      }`}
                     key={activity.id}
-                    albumCover={activity.review_details.album.cover_url || ""}
-                    albumTitle={
-                      activity?.review_details?.album?.title ?? "Unknown"
-                    }
-                    artistName={
-                      activity?.review_details?.album?.artist ?? "Unknown"
-                    }
-                    rating={activity.review_details.rating}
-                    hasReview={activity.review_details.content.length > 0}
-                    time={activity.created_at}
-                  />
-                </div>
-              ))
+                    onClick={() => {
+                      if (activity.review_details && activity.review_details.content.length > 0) {
+                        setChosenReview(activity);
+                        setOpenReview(true);
+                      }
+                    }}
+                  >
+                    <RecentActivityCard
+                      key={activity.id}
+                      albumCover={activity.review_details.album.cover_url || ""}
+                      albumTitle={
+                        activity.review_details.album.title ?? "Unknown"
+                      }
+                      artistName={
+                        activity.review_details.album.artist ?? "Unknown"
+                      }
+                      rating={activity.review_details.rating}
+                      hasReview={activity.review_details.content.length > 0}
+                      time={activity.created_at}
+                    />
+                  </div>
+                ) : null
+              )
             ) : filter === "liked" && likedActivity.length ? (
-              likedActivity.map((activity) => (
-                <div
-                  className={`mb-2 ${activity.review_details.content.length > 0 &&
-                    "cursor-pointer"
-                    }`}
-                  key={activity.id}
-                  onClick={() => {
-                    if (activity.review_details.content.length > 0) {
-                      setChosenReview(activity);
-                      setOpenReview(true);
-                    }
-                  }}
-                >
-                  <RecentActivityCard
+              likedActivity.map((activity) =>
+                activity.review_details ? (
+                  <div
+                    className={`mb-2 ${activity.review_details.content.length > 0 &&
+                      "cursor-pointer"
+                      }`}
                     key={activity.id}
-                    albumCover={activity.review_details.album.cover_url || ""}
-                    albumTitle={
-                      activity?.review_details?.album?.title ?? "Unknown"
-                    }
-                    artistName={
-                      activity?.review_details?.album?.artist ?? "Unknown"
-                    }
-                    rating={activity.review_details.rating}
-                    hasReview={activity.review_details?.content.length > 0}
-                    time={activity.created_at}
-                  />
-                </div>
-              ))
+                    onClick={() => {
+                      if (activity.review_details && activity.review_details.content.length > 0) {
+                        setChosenReview(activity);
+                        setOpenReview(true);
+                      }
+                    }}
+                  >
+                    <RecentActivityCard
+                      key={activity.id}
+                      albumCover={activity.review_details.album.cover_url || ""}
+                      albumTitle={
+                        activity.review_details.album.title ?? "Unknown"
+                      }
+                      artistName={
+                        activity.review_details.album.artist ?? "Unknown"
+                      }
+                      rating={activity.review_details.rating}
+                      hasReview={activity.review_details.content.length > 0}
+                      time={activity.created_at}
+                    />
+                  </div>
+                ) : null
+              )
             ) : (
               <p className="text-gray-500 italic">No recent activity yet.</p>
             )}
