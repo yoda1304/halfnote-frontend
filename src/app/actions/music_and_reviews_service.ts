@@ -58,6 +58,35 @@ export const getSearch = async (discogsID: string) => {
   }
 };
 
+export const getSearchArtists = async (query: string) => {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/music/search/artists/?q=${encodeURIComponent(query)}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 0 },
+        cache: "no-store",
+      },
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || `Could not get artists for ${query}`);
+    }
+    return await response.json();
+  } catch (error: unknown) {
+    console.error("Artist search failed:", error);
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : "Failed to get artist search results",
+    );
+  }
+};
+
 export const getSearchUsers = async (query: string) => {
   try {
     const response = await fetch(

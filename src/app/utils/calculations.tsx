@@ -172,7 +172,7 @@ export const getArtistsFromAlbums = (
   searchQuery: string,
 ) => {
   const artistMap = new Map<string, string>();
-
+  console.log("querying: ", albums);
   albums.forEach((album) => {
     if (!album.artist) return;
     if (

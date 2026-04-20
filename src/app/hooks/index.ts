@@ -10,6 +10,7 @@ import {
   getPopularAlbums,
   getSearchUsers,
   getArtistDetails,
+  getSearchArtists,
 } from "@/app/actions/music_and_reviews_service";
 import {
   createReview,
@@ -205,7 +206,7 @@ export const useOthersActivity = (username: string, type: ActivityFilterType) =>
     enabled: !!username && !!type,
   });
 
-export const useSearch = (discogsID: string) => {
+export const useSearchAlbums = (discogsID: string) => {
   return useQuery({
     queryKey: queryKeys.searchAlbums(discogsID),
     queryFn: () => getSearch(discogsID),
@@ -218,6 +219,15 @@ export const useSearchUsers = (query: string) => {
   return useQuery({
     queryKey: queryKeys.searchUsers(query),
     queryFn: () => getSearchUsers(query),
+    enabled: !!query && query.length > 0,
+    staleTime: CACHE_TIMES.USER_SEARCH,
+  });
+};
+
+export const useSearchArtists = (query: string) => {
+  return useQuery({
+    queryKey: queryKeys.searchArtists(query),
+    queryFn: () => getSearchArtists(query),
     enabled: !!query && query.length > 0,
     staleTime: CACHE_TIMES.USER_SEARCH,
   });

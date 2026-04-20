@@ -38,7 +38,7 @@ export const SearchDropdown = ({
   const renderAutocompleteItem = (
     text: string,
     uniqueKey: string,
-    isRawQuery: boolean = false
+    isRawQuery: boolean = false,
   ) => {
     let prefix = "";
     let suffix = text;
@@ -84,81 +84,90 @@ export const SearchDropdown = ({
       exit={{ opacity: 0, scaleY: 0.8, transition: { duration: 0.1 } }}
       transition={{ delay: 0.2, duration: 0.2, ease: "easeOut" }}
     >
+      {/* Autocomplete suggestions commented out — search submits raw query on enter
       {query.length > 0 ? (
         <div className="flex flex-col gap-1 overflow-y-auto">
           {renderAutocompleteItem(query, "raw-query", true)}
           {searchResults
             .filter((item) => item.title.toLowerCase() !== query.toLowerCase())
-            .map((item) => renderAutocompleteItem(item.title, item.id.toString()))}
+            .map((item) =>
+              renderAutocompleteItem(item.title, item.id.toString()),
+            )}
         </div>
-      ) : (
-        <>
-          <h1 className="another-heading2 text-3xl font-medium mb-2">
-            Recent Searches
-          </h1>
-          <div className="flex flex-row gap-2 mb-2 flex-wrap">
-            {recentSearches?.map((search, index) => (
-              <div
+      ) : ( */}
+      <>
+        <h1 className="another-heading2 text-3xl font-medium mb-2">
+          Recent Searches
+        </h1>
+        <div className="flex flex-row gap-2 mb-2 flex-wrap">
+          {recentSearches?.map((search, index) => (
+            <div
+              key={index}
+              className="flex flex-row gap-2 w-auto h-7 border-black border-1 rounded-full items-center justify-center p-3 cursor-pointer hover:bg-gray-200"
+              onClick={() => handleSearch(search)}
+            >
+              <Image
                 key={index}
-                className="flex flex-row gap-2 w-auto h-7 border-black border-1 rounded-full items-center justify-center p-3 cursor-pointer hover:bg-gray-200"
-                onClick={() => handleSearch(search)}
-              >
-                <Image
-                  key={index}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeSearch(search);
-                  }}
-                  src={Icons.close}
-                  alt="Close"
-                  width={10}
-                  height={10}
-                  className="hover:cursor-pointer"
-                />
-                {search}
-              </div>
-            ))}
-          </div>
-          <h1 className="another-heading2 text-3xl font-medium mb-2">
-            New Releases
-          </h1>
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            {newReleases?.map((album, index) => (
-              <div
-                key={index}
-                className="cursor-pointer"
-                onClick={() => router.push(`/albums/${album.id}`)}
-              >
-                <SplitCard
-                  image={album.cover_image || ""}
-                  albumName={album.title}
-                  artistName={album.artist}
-                  size="large"
-                />
-              </div>
-            ))}
-          </div>
-          <h1 className="another-heading2 text-3xl font-medium mb-2">
-            Popular Albums
-          </h1>
-          <div className="grid grid-cols-2 gap-4">
-            {popularAlbums?.map((album, index) => (
-              <div
-                key={index}
-                className="cursor-pointer"
-                onClick={() => router.push(`/albums/${album.id}`)}
-              >
-                <SplitCard
-                  image={album.cover_image || ""}
-                  albumName={album.title}
-                  artistName={album.artist}
-                  size="small"
-                />
-              </div>
-            ))}
-          </div>
-        </>
-      )}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeSearch(search);
+                }}
+                src={Icons.close}
+                alt="Close"
+                width={10}
+                height={10}
+                className="hover:cursor-pointer"
+              />
+              {search}
+            </div>
+          ))}
+        </div>
+        <h1 className="another-heading2 text-3xl font-medium mb-2">
+          New Releases
+        </h1>
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          {newReleases?.map((album, index) => (
+            <div
+              key={index}
+              className="cursor-pointer"
+              onClick={() => {
+                router.push(`/albums?query=${album.id}`);
+                onClose();
+              }}
+            >
+              <SplitCard
+                image={album.cover_image || ""}
+                albumName={album.title}
+                artistName={album.artist}
+                size="large"
+              />
+            </div>
+          ))}
+        </div>
+        <h1 className="another-heading2 text-3xl font-medium mb-2">
+          Popular Albums
+        </h1>
+        <div className="grid grid-cols-2 gap-4">
+          {popularAlbums?.map((album, index) => (
+            <div
+              key={index}
+              className="cursor-pointer"
+              onClick={() => {
+                router.push(`/albums?query=${album.id}`);
+                onClose();
+              }}
+            >
+              <SplitCard
+                image={album.cover_image || ""}
+                albumName={album.title}
+                artistName={album.artist}
+                size="small"
+              />
+            </div>
+          ))}
+        </div>
+      </>
+      {/* End commented-out autocomplete block */}
     </motion.div>
   );
 };

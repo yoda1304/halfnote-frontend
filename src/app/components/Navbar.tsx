@@ -12,7 +12,7 @@ import { SkeletonNavBar } from "./skeletons/SkeletonNavBar";
 import { AnimatePresence, motion } from "framer-motion";
 import { SearchDropdown } from "./SearchDropdown";
 import { useRecentSearches } from "@/app/hooks/useRecentSearches";
-import { useNewReleases, usePopularAlbums, useSearch } from "@/app/hooks";
+import { useNewReleases, usePopularAlbums, useSearchAlbums } from "@/app/hooks";
 import { useDebounce } from "@/app/hooks/useDebounce";
 export const NavBar = () => {
   const router = useRouter();
@@ -25,7 +25,7 @@ export const NavBar = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  const { data: searchResults } = useSearch(debouncedSearchQuery);
+  const { data: searchResults } = useSearchAlbums(debouncedSearchQuery);
 
   const { data: newReleases } = useNewReleases();
   const { data: popularAlbums } = usePopularAlbums();
@@ -58,7 +58,7 @@ export const NavBar = () => {
   // For wholenote page, skip authentication check
   if (!isWholeNote && (isUserLoading || !userData)) return <SkeletonNavBar />;
   return (
-    <nav className="flex rounded-full outline-solid outline-2 outline-black bg-white p-4 w-full relative items-center">
+    <nav className="flex rounded-full outline-solid outline-2 outline-black bg-white p-4 w-full relative items-center mb-4">
       {!isWholeNote && (
         <>
           <motion.div

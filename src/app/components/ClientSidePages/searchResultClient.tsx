@@ -1,12 +1,12 @@
 "use client";
-import { useSearch, useSearchUsers } from "@/app/hooks";
+import { useSearchAlbums, useSearchArtists, useSearchUsers } from "@/app/hooks";
 import { useSearchParams } from "next/navigation";
 import React from "react";
-import { SmallAlbumCard } from "../SmallAlbumCard";
+import { SmallAlbumCard } from "@/app/components/SmallAlbumCard";
 import { SearchResult, UserResult } from "@/app/types/types";
-import { SmallUserCard } from "../SmallUserCard";
+import { SmallUserCard } from "@/app/components/SmallUserCard";
 import { getArtistsFromAlbums } from "@/app/utils/calculations";
-import { SmallArtistCard } from "../SmallArtistCard";
+import { SmallArtistCard } from "@/app/components/SmallArtistCard";
 
 export const SearchResultPage = () => {
   const searchParams = useSearchParams();
@@ -16,12 +16,22 @@ export const SearchResultPage = () => {
     data: albumList,
     isLoading: albumLoading,
     isError: albumError,
-  } = useSearch(query || "");
+  } = useSearchAlbums(query || "");
   const {
     data: userList,
     isLoading: userLoading,
     isError: userError,
   } = useSearchUsers(query || "");
+
+  const {
+    data: artistList,
+    isLoading: artistLoading,
+    isError: artistError,
+  } = useSearchArtists(query || "");
+
+  console.log(albumList);
+  console.log(artistList);
+  console.log(userList);
 
   const isLoading = albumLoading || userLoading;
   const isError = albumError || userError;
@@ -30,6 +40,7 @@ export const SearchResultPage = () => {
   const listeners = userList?.users || [];
 
   const artists = getArtistsFromAlbums(albums, query || "");
+  console.log(artists);
   if (!query) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">

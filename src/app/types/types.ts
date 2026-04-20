@@ -43,7 +43,6 @@ export interface Album {
   artist: string;
   year?: number;
   cover_url?: string;
-  cover_image?: string;
   artist_photo_url?: string; // Artist photo from Discogs
   genres?: Genre[]; // Album genres (not user-assigned)
   discogs_id: string;
@@ -145,7 +144,7 @@ export interface UserResult {
   following_count: number;
   review_count: number;
   top_rated_albums?: TopRatedAlbum[]; // From UserSerializer (search results only)
-  is_following: boolean;
+  is_following?: boolean; // Absent from UserSerializer (search), present in UserFollowSerializer
   is_staff?: boolean;
 }
 
@@ -181,22 +180,6 @@ export interface CommentActivityDetails {
   id: number;
   content: string;
   created_at: string;
-}
-
-export interface NewReleases {
-  albumName: string;
-  artistName: string;
-  coverUrl?: string;
-  year?: number;
-  discogsId?: string;
-}
-
-export interface TopRated {
-  albumName: string;
-  artistName: string;
-  coverUrl?: string;
-  rating?: number;
-  discogsId?: string;
 }
 
 // ============= List Types =============
@@ -335,9 +318,21 @@ export interface ListLikesResponse {
 
 // ============= Search & Discovery Responses =============
 
+export interface ArtistSearchResult {
+  name: string;
+  discogs_id: number;
+  artist_photo_url: string;
+}
+
 export interface SearchAlbumsResponse {
   results: SearchResult[];
   cached: boolean;
+}
+
+export interface SearchArtistsResponse {
+  results: ArtistSearchResult[];
+  cached: boolean;
+  rate_limited?: boolean;
 }
 
 export interface SearchUsersResponse {
