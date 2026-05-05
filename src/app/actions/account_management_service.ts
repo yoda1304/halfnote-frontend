@@ -2,10 +2,7 @@
 import { cookies } from "next/headers";
 
 // Remove trailing slash from BASE_URL to prevent double slashes
-const BASE_URL = (process.env.BASE_URL || `http://localhost:8000`).replace(
-  /\/$/,
-  "",
-);
+const BASE_URL = (process.env.BASE_URL || `http://localhost:8000`).replace(/\/$/, '');
 // export async function decrypt(session: string | undefined = "") {
 //   if (!session) {
 //     throw new Error("No session token provided");
@@ -43,7 +40,7 @@ export async function createSession(
     const cookieStore = await cookies();
 
     // Use secure cookies only in production (HTTPS)
-    const isProduction = process.env.NODE_ENV === "production";
+    const isProduction = process.env.NODE_ENV === 'production';
     console.log("createSession: isProduction =", isProduction);
 
     cookieStore.set("access", access_token, {
@@ -202,17 +199,11 @@ export const LoginUser = async (
     });
 
     console.log("LoginUser: Response status", response.status);
-    console.log(
-      "LoginUser: Response content-type",
-      response.headers.get("content-type"),
-    );
+    console.log("LoginUser: Response content-type", response.headers.get('content-type'));
 
     // Get the response text first to see what we're actually receiving
     const responseText = await response.text();
-    console.log(
-      "LoginUser: Response text (first 500 chars):",
-      responseText.substring(0, 500),
-    );
+    console.log("LoginUser: Response text (first 500 chars):", responseText.substring(0, 500));
 
     if (!response.ok) {
       let error;
@@ -229,10 +220,7 @@ export const LoginUser = async (
     try {
       data = JSON.parse(responseText);
     } catch {
-      console.error(
-        "LoginUser: Failed to parse response as JSON. Response was:",
-        responseText,
-      );
+      console.error("LoginUser: Failed to parse response as JSON. Response was:", responseText);
       throw new Error("Server returned invalid JSON response");
     }
     console.log("LoginUser: Success data received", data);
