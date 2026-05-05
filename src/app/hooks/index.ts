@@ -411,7 +411,6 @@ export const useEditReview = (username: string) => {
     mutationKey: ["editReview"],
     mutationFn: async ({
       reviewId,
-      discogsId,
       ratingNumber,
       description,
       genres,

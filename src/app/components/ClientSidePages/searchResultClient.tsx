@@ -23,11 +23,7 @@ export const SearchResultPage = () => {
     isError: userError,
   } = useSearchUsers(query || "");
 
-  const {
-    data: artistList,
-    isLoading: artistLoading,
-    isError: artistError,
-  } = useSearchArtists(query || "");
+  const { data: artistList } = useSearchArtists(query || "");
 
   console.log(albumList);
   console.log(artistList);

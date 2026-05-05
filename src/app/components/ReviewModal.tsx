@@ -142,10 +142,7 @@ export default function WriteReview({
                       {/* Left Side - Album Info */}
                       <div className="flex flex-col items-center w-[220px]">
                         <Image
-                          src={
-                            data.cover_url ??
-                            (data.cover_image || "/default-album.png")
-                          }
+                          src={data.cover_url ?? "/default-album.png"}
                           alt="Album Cover"
                           width={220}
                           height={220}

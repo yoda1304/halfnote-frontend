@@ -92,7 +92,7 @@ export const ExpandedReviewModal = ({
               <Image
                 width={100}
                 height={100}
-                src={generateRatingStamp(data.rating, {
+                src={generateRatingStamp(data.rating ?? 0, {
                   empty: false,
                   outTen: true,
                 })}
@@ -113,7 +113,7 @@ export const ExpandedReviewModal = ({
               <div className="flex flex-row gap-x-4 mb-4">
                 <Image
                   src={data.userAvatar || ""}
-                  alt={data.username}
+                  alt={data.username ?? ""}
                   width={50}
                   height={50}
                   className="w-14 h-14 rounded-full object-cover"

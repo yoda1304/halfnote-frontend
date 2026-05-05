@@ -69,8 +69,7 @@ const AlbumDetailsClient = ({ user }: AlbumDetailsProps) => {
     (review: Review) => review.username === user.username.toLowerCase(),
   );
 
-  const imageSrc =
-    albumDetails.album.cover_url || albumDetails.album.cover_image;
+  const imageSrc = albumDetails.album.cover_url;
 
   return (
     <>

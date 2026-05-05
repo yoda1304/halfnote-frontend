@@ -27,18 +27,6 @@ const ArtistDetailsClient = () => {
       </p>
     );
 
-  // Placeholder data for now as requested
-  const albums = [
-    { title: "Ö", artist: "Fcukers", cover: "/sample_images/lorde.jpeg" },
-    {
-      title: "I Like It Like That",
-      artist: "Fcukers",
-      cover: "/sample_images/lorde.jpeg",
-    },
-    { title: "Play Me", artist: "Fcukers", cover: "/sample_images/lorde.jpeg" },
-    { title: "Mothers", artist: "Fcukers", cover: "/sample_images/lorde.jpeg" },
-    { title: "Bon Bon", artist: "Fcukers", cover: "/sample_images/lorde.jpeg" },
-  ];
   if (artistDetails) {
     return (
       <div className="flex flex-col w-full max-w-7xl mx-auto px-4 gap-8 pb-20">
