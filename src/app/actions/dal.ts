@@ -28,10 +28,8 @@ export const verifySession = cache(async () => {
     });
 
     if (!response.ok) {
-      cookieStore.delete("access");
-      cookieStore.delete("refresh");
-      cookieStore.delete("username");
-
+      // Don't delete cookies here - this function is called during render
+      // Cookie deletion should only happen in Server Actions
       return {
         isAuth: false,
         access_token: null,
@@ -46,9 +44,8 @@ export const verifySession = cache(async () => {
     };
   } catch (error) {
     console.error("Token verification failed:", error);
-    cookieStore.delete("access");
-    cookieStore.delete("refresh");
-    cookieStore.delete("username");
+    // Don't delete cookies here - this function is called during render
+    // Cookie deletion should only happen in Server Actions
     return {
       isAuth: false,
       access_token: null,
