@@ -32,7 +32,7 @@ const BASE_URL = (process.env.BASE_URL || `http://localhost:8000`).replace(/\/$/
 export async function createSession(
   access_token: string,
   refresh_token: string,
-  username: string
+  username: string,
 ) {
   try {
     console.log("createSession: Starting session creation for", username);
@@ -78,7 +78,7 @@ export const EditProfile = async (
   bio?: string,
   location?: string,
   avatar?: File,
-  banner?: File
+  banner?: File,
 ) => {
   try {
     const cookieStore = await cookies();
@@ -126,7 +126,7 @@ export const RegisterUser = async (
   email: string,
   password: string,
   bio?: string,
-  avatar?: File
+  avatar?: File,
 ) => {
   try {
     const formData = new FormData();
@@ -135,7 +135,6 @@ export const RegisterUser = async (
     formData.append("password", password);
     if (bio) formData.append("bio", bio);
     if (avatar) formData.append("avatar", avatar);
-    console.log("formdata: ", JSON.stringify(formData));
     const response = await fetch(`${BASE_URL}/accounts/register/`, {
       method: "POST",
       body: formData,
@@ -144,7 +143,9 @@ export const RegisterUser = async (
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || data.detail || "Registration failed");
+      throw new Error(
+        data.error || data.message || data.detail || "Registration failed",
+      );
     }
 
     if (!data.access_token || !data.refresh_token) {
@@ -170,13 +171,15 @@ export const logoutUser = async () => {
   try {
     await deleteSession();
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : "Could not logout");
+    throw new Error(
+      error instanceof Error ? error.message : "Could not logout",
+    );
   }
 };
 //assumes no cookies are set
 export const LoginUser = async (
   username: string,
-  password: string
+  password: string,
 ): Promise<void> => {
   try {
     console.log("LoginUser: Starting login for", username);
@@ -235,6 +238,8 @@ export const LoginUser = async (
     // Log the actual error for debugging
     console.error("LoginUser: Error occurred", error);
     // Re-throw the error for the component to handle
-    throw new Error(error instanceof Error ? error.message : "An error occurred during login");
+    throw new Error(
+      error instanceof Error ? error.message : "An error occurred during login",
+    );
   }
 };
