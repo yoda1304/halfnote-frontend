@@ -1,10 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Temporarily disabled to test Vercel build
-  // images: {
-  //   domains: ["res.cloudinary.com", "i.discogs.com", "st.discogs.com"],
-  // },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.discogs.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'st.discogs.com',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
