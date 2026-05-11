@@ -81,17 +81,19 @@ export default function ProfilePage({ user }: ProfilePageProps) {
   if (isPendingUser) return <ProfilePageSkeleton />;
 
   return (
-    <div className="flex flex-col border-black border-2 bg-white rounded-xl overflow-scroll pb-10 max-h-[800px]">
-      <div className="w-full h-60 relative">
-        <Image
-          src={Black}
-          alt="banner-image"
-          className="w-full h-full object-cover"
-        />
-      </div>
+    <div className="flex flex-col border-black border-2 bg-white rounded-xl overflow-hidden w-full max-h-[calc(100vh-160px)]">
+      <div className="overflow-y-auto flex-1 relative">
+        {/* Banner — absolute inside the scrollable container */}
+        <div className="absolute top-0 left-0 w-full h-60">
+          <Image
+            src={Black}
+            alt="banner-image"
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-      {/* Content */}
-      <div className="grid grid-cols-8 flex-grow relative">
+        {/* Content — sits below the banner via mt-60 (adjust to control gap) */}
+        <div className="grid grid-cols-8 relative mt-60 pr-2 pb-10">
         {/* Profile Info Sidebar */}
         <div className="col-span-2 flex flex-col items-center px-50">
           {/* Profile Picture */}
@@ -343,6 +345,7 @@ export default function ProfilePage({ user }: ProfilePageProps) {
           </div>
         </div>
       </div>
+    </div>
       {editProfileModal && <EditProfileModal setOpen={setEditProfileModal} />}
       {openReview && (
         <ExpandedReviewModal

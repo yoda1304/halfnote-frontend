@@ -1,8 +1,9 @@
 "use server";
 import { cookies } from "next/headers";
 
-// Remove trailing slash from BASE_URL to prevent double slashes
-const BASE_URL = (process.env.BASE_URL || `http://localhost:8000`).replace(/\/$/, '');
+const BASE_URL = (
+  process.env.BASE_URL || "https://halfnote-backend.vercel.app/api"
+).replace(/\/$/, "");
 // export async function decrypt(session: string | undefined = "") {
 //   if (!session) {
 //     throw new Error("No session token provided");

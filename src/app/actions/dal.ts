@@ -2,8 +2,9 @@
 import { cookies } from "next/headers";
 import { cache } from "react";
 
-const BASE_URL =
-  (process.env.BASE_URL || "https://halfnote-backend.vercel.app") + "/api";
+const BASE_URL = (
+  process.env.BASE_URL || "https://halfnote-backend.vercel.app/api"
+).replace(/\/$/, "");
 
 export const verifySession = cache(async () => {
   const cookieStore = await cookies();
