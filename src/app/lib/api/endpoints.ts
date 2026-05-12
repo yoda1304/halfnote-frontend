@@ -7,8 +7,9 @@
  *   ENDPOINTS.accounts.login.path()
  */
 
-const BASE_URL =
-  (process.env.BASE_URL || "https://halfnote-backend.vercel.app") + "/api";
+const BASE_URL = (
+  process.env.BASE_URL || "https://halfnote-backend.vercel.app/api"
+).replace(/\/$/, "");
 
 /**
  * Helper to construct full URLs

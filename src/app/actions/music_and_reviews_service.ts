@@ -1,8 +1,9 @@
 "use server";
 import { verifySession } from "./dal";
 
-const BASE_URL =
-  (process.env.BASE_URL || "https://halfnote-backend.vercel.app") + "/api";
+const BASE_URL = (
+  process.env.BASE_URL || "https://halfnote-backend.vercel.app/api"
+).replace(/\/$/, "");
 
 export const getAlbumDetails = async (discogsID: string) => {
   try {
