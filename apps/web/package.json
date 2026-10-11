@@ -1,0 +1,48 @@
+{
+  "name": "@halfnote/web",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint && tsc --noEmit",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@halfnote/data": "*",
+    "@halfnote/ui": "*",
+    "@tanstack/query-sync-storage-persister": "^5.80.7",
+    "@tanstack/react-query": "^5.80.7",
+    "@tanstack/react-query-devtools": "^5.81.5",
+    "@tanstack/react-query-persist-client": "^5.80.7",
+    "embla-carousel-react": "^8.6.0",
+    "formik": "^2.4.6",
+    "framer-motion": "^12.6.5",
+    "i18next": "^25.3.1",
+    "lucide-react": "^0.545.0",
+    "luxon": "^3.6.1",
+    "next": "^15.5.14",
+    "next-i18next": "^15.4.2",
+    "postcss": "^8.5.3",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-i18next": "^15.6.0",
+    "react-native-svg": "^15.15.4",
+    "react-native-web": "^0.21.3",
+    "yup": "^1.7.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@eslint/js": "^9.24.0",
+    "@tailwindcss/postcss": "^4.1.10",
+    "@types/luxon": "^3.6.2",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint-config-next": "15.2.4",
+    "globals": "^16.0.0",
+    "tailwindcss": "^4.1.10",
+    "typescript": "^5",
+    "typescript-eslint": "^8.29.1"
+  }
+}

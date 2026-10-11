@@ -1,0 +1,24 @@
+{
+  "name": "@halfnote/data",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react.tsx"
+  },
+  "scripts": {
+    "test": "node --import tsx --test src/*.test.ts",
+    "typecheck": "tsc --noEmit -p .",
+    "lint": "eslint src"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5",
+    "react": "^19"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "tsx": "^4",
+    "typescript": "^5",
+    "typescript-eslint": "^8.29.1"
+  }
+}
