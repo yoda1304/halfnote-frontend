@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Halfnote",
+    "slug": "halfnote",
+    "scheme": "halfnote",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.halfnote.ios"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "./plugins/with-scene-lifecycle",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "../../node_modules/@expo-google-fonts/instrument-serif/400Regular/InstrumentSerif_400Regular.ttf",
+            "../../node_modules/@expo-google-fonts/instrument-serif/400Regular_Italic/InstrumentSerif_400Regular_Italic.ttf",
+            "../../node_modules/@expo-google-fonts/instrument-sans/400Regular/InstrumentSans_400Regular.ttf",
+            "../../node_modules/@expo-google-fonts/instrument-sans/400Regular_Italic/InstrumentSans_400Regular_Italic.ttf",
+            "../../node_modules/@expo-google-fonts/instrument-sans/500Medium/InstrumentSans_500Medium.ttf",
+            "../../node_modules/@expo-google-fonts/instrument-sans/500Medium_Italic/InstrumentSans_500Medium_Italic.ttf",
+            "../../node_modules/@expo-google-fonts/instrument-sans/600SemiBold/InstrumentSans_600SemiBold.ttf",
+            "../../node_modules/@expo-google-fonts/instrument-sans/600SemiBold_Italic/InstrumentSans_600SemiBold_Italic.ttf",
+            "../../node_modules/@expo-google-fonts/instrument-sans/700Bold/InstrumentSans_700Bold.ttf",
+            "../../node_modules/@expo-google-fonts/instrument-sans/700Bold_Italic/InstrumentSans_700Bold_Italic.ttf"
+          ]
+        }
+      ]
+    ]
+  }
+}
